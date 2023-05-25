@@ -26,8 +26,8 @@ export default function Showcase() {
 
       <ShowcaseCard
         title={<React.Fragment>SARS-CoV-2 in the UK</React.Fragment>}
-        linkUrl="https://microreact.org/project/qYq92faghSBX7fMBDN4A2a-cog-uk-global-tree"
-        // linkUrl="https://microreact.org/project/cogconsortium"
+        // linkUrl="https://microreact.org/project/qYq92faghSBX7fMBDN4A2a-cog-uk-global-tree"
+        linkUrl="https://microreact.org/project/eDRh8N1gx66onGUvPAsQik-uk-sars-cov-2-2020-02-052022-02-11/"
         imageUrl="images/showcase/cogconsortium-uk.png"
         subTitle="COG-UK Consortium"
         supportingText={<React.Fragment>Continuous evaluation of the lineages circulating in the UK<br/>(updated weekly)</React.Fragment>}
@@ -46,8 +46,8 @@ export default function Showcase() {
 
       <ShowcaseCard
         title={<React.Fragment>Global Distribution of SARS-CoV-2</React.Fragment>}
-        linkUrl=" https://microreact.org/project/tKgkqrqapvGa5RLL2azabp/0cc63c25"
-        // linkUrl="https://microreact.org/project/cogconsortium-global"
+        // linkUrl="https://microreact.org/project/tKgkqrqapvGa5RLL2azabp/0cc63c25"
+        linkUrl="/project/6Y5GvktuhqgRRDwRQ7cUze-global-sars-cov-2-2019-12-242022-02-11/"
         imageUrl="images/showcase/cogconsortium-global.png"
         subTitle="COG-UK Consortium"
         supportingText={<React.Fragment>Continuous evaluation of the lineages circulating around the globe.<br/>(updated weekly)</React.Fragment>}
