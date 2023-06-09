@@ -9,7 +9,8 @@
     "start": "next start",
     "mm": "migrate-mongo",
     "release": "npm version major && git push && git push --tags",
-    "init": "git submodule update --init && npm install"
+    "init": "git submodule update --init && npm install",
+    "version": "cat package.json | jq -r .version | cut -d'.' -f 1"
   },
   "dependencies": {
     "@emotion/cache": "^11.10.1",
