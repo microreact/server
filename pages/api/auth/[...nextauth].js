@@ -141,7 +141,7 @@ const options = {
   theme: {
     brandColor: "#3d7484",
     colorScheme: "light",
-    logo: "/images/logos/microreact.svg",
+    logo: "/images/logos/microreact-auth.svg",
   },
 
   // Additional options
