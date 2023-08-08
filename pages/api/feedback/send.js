@@ -35,15 +35,16 @@ export default async function (req, res) {
     emailText.push(`${key}: ${req.headers[key]}`);
   }
 
+  const replyToAddress = emailAddress || (user?.email) || undefined;
   await sendEmailMessage(
     serverRuntimeConfig.helpDesk.email,
     {
-      subject: serverRuntimeConfig.helpDesk.subject,
+      subject: `Microreact.org Feedback from ${replyToAddress}`,
       text: emailText.join(" \\\n"),
       html: null /* html */,
     },
     attachments,
-    emailAddress || (user?.email) || undefined,
+    replyToAddress,
   );
 
   res.status(200).send();
