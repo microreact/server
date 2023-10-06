@@ -1,3 +1,6 @@
 [submodule "microreact-viewer"]
 	path = microreact-viewer
 	url = git@github.com:microreact/viewer.git
+[submodule "cgps-stdlib"]
+	path = cgps-stdlib
+	url = https://github.com/cgps-group/cgps-stdlib.git

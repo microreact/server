@@ -29,6 +29,7 @@
     "boolean": "^3.1.4",
     "bytes": "^3.1.2",
     "cgps-application-server": "github:cgps-dev/application-server#v24.0.0",
+    "cgps-stdlib": "file:cgps-stdlib",
     "clsx": "^1.1.1",
     "ejs": "^3.1.6",
     "email-templates": "^8.0.3",
