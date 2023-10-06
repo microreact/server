@@ -35,6 +35,7 @@ export default function MyApp(props) {
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
+
       <ThemeProvider theme={muiTheme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
@@ -46,7 +47,6 @@ export default function MyApp(props) {
             </DefaultLayout>
           </SnackbarProvider>
         </AuthSessionProvider>
-
       </ThemeProvider>
     </CacheProvider>
   );
