@@ -7,7 +7,12 @@ export const config = {
 };
 
 export default async function (req, res) {
-  const response = await ProxyService.getStream(req.query.url);
+  const response = await ProxyService.getStream(
+    req.query.url,
+    {
+      "Referer": req.headers.referer,
+    },
+  );
 
   res.status(response.status ?? 200);
 
