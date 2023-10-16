@@ -86,11 +86,15 @@ async function getGoogleDriveStream(fileId) {
   return { stream: response.data };
 }
 
-function getStream(url) {
+function getStream(
+  url,
+  headers,
+) {
   return axios({
     method: "get",
     url,
     responseType: "stream",
+    headers,
   })
     .then(
       (response) => ({
@@ -101,7 +105,10 @@ function getStream(url) {
     );
 }
 
-function rewriteUrl(url) {
+function rewriteUrl(
+  url,
+  headers,
+) {
   let match = null;
 
   // Dropbox shared files, converts links from:
@@ -154,7 +161,7 @@ function rewriteUrl(url) {
     return getFtpUrl(url);
   }
 
-  return getStream(url);
+  return getStream(url, headers);
 }
 
 module.exports = {
