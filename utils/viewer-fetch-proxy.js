@@ -15,6 +15,9 @@ export default async function fetcher(originalUrl) {
 
   try {
     const content = await fetch(url);
+    if (content.type === "cors") {
+      throw new TypeError();
+    }
     return content;
   }
   catch (error) {
