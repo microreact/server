@@ -60,8 +60,8 @@ export default function Showcase() {
         linkUrl="/project/west-african-ebola-epidemic?tt=rc"
         imageUrl="images/showcase/west-african-ebola-epidemic.png"
         subTitle="Dudas G. et al. 2017."
-        supportingText="Phylogeographic reconstruction of the West African Ebola epidemic based 1610 complete genomes. Nature 1476-4687 (doi:10.1038/nature22040)."
-        supportingLink="http://www.nature.com/nature/journal/vaop/ncurrent/full/nature22040.html"
+        supportingText="Virus genomes reveal factors that spread and sustained the Ebola epidemic. Nature. 2017 Apr 20;544(7650):309-315. (doi:10.1038/nature22040)."
+        supportingLink="https://pubmed.ncbi.nlm.nih.gov/28405027/"
       />
       <ShowcaseCard
         title="Zika virus in the Americas"
