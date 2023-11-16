@@ -161,6 +161,12 @@ if (serverRuntimeConfig.auth.google) {
   );
 }
 
+if (serverRuntimeConfig.auth["azure-ad"]) {
+  options.providers.push(
+    AzureADProvider(serverRuntimeConfig.auth["azure-ad"])
+  );
+}
+
 if (serverRuntimeConfig.auth.facebook) {
   options.providers.push(
     FacebookProvider(serverRuntimeConfig.auth.facebook)
@@ -176,12 +182,6 @@ if (serverRuntimeConfig.auth.twitter) {
 if (serverRuntimeConfig.auth.github) {
   options.providers.push(
     GitHubProvider(serverRuntimeConfig.auth.github)
-  );
-}
-
-if (serverRuntimeConfig.auth["azure-ad"]) {
-  options.providers.push(
-    AzureADProvider(serverRuntimeConfig.auth["azure-ad"])
   );
 }
 
