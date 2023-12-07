@@ -90,6 +90,19 @@
   margin: 8px;
 }
 
+.mr-footer-credits {
+  text-align: left;
+}
+
+.mr-footer-credits hr {
+  display: inline-block;
+}
+
+.mr-footer-credits a {
+  color: #fff;
+  margin-right: 16px;
+}
+
 p.cgps-copyright {
   box-sizing: border-box;
   font-size: 13px;
