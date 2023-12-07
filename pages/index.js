@@ -70,6 +70,23 @@ export default function Home() {
       <Showcase />
 
       <footer className={defaultStyles["mr-footer"]}>
+        <p className={defaultStyles["mr-footer-credits"]}>
+          Microreact is developed and maintained by the&nbsp;
+          <a href="https://www.pathogensurveillance.net/">
+            Centre for Genomic Pathogen Surveillance
+          </a>
+          < hr />
+          <a href="https://docs.microreact.org/about-microreact/privacy-and-terms#personal-data-and-your-responsibilities">
+            Privacy Policy
+          </a>
+          <a href="https://docs.microreact.org/">
+            Documentation
+          </a>
+          <a href="https://docs.microreact.org/feedback/contact">
+            Contact Us
+          </a>
+        </p>
+        <br />
         <p>
           <span>Funded by </span>
           <img
