@@ -12,6 +12,9 @@ export default async function fetcher(originalUrl) {
   if (url.startsWith("/")) {
     url = `https://microreact.org${url}`;
   }
+  // if (url.startsWith("https://microreact.org/")) {
+  //   url = url.substr("https://microreact.org".length);
+  // }
 
   try {
     const content = await fetch(url);
