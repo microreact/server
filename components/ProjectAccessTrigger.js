@@ -11,7 +11,7 @@ import ManageAccountsIcon from "./ManageAccountsIcon";
 import * as DataHooks from "../utils/data-hooks";
 
 const ProjectAccessDialog = dynamic(
-  () => import("./ProjectAccessDialog"),
+  () => import("./access-dialog/index.js"),
   {
     loading: UiLoadingBar,
     ssr: false,

@@ -13,7 +13,7 @@ import useLeavePageConfirm from "../hooks/leave-page-confirm";
 import * as Projects from "../utils/projects";
 
 import ProjectSaveDialog from "./ProjectSaveDialog";
-import ProjectAccessDialog from "./ProjectAccessDialog";
+import ProjectAccessDialog from "./access-dialog/index.js";
 import ManageAccountsIcon from "./ManageAccountsIcon";
 import EditOffMenu from "./EditOffMenu.react";
 import SaveButton from "./SaveButton";

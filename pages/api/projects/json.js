@@ -1,4 +1,7 @@
-import { ApiError } from "next/dist/server/api-utils";
+import catchApiErrors from "cgps-stdlib/errors/catch-api-errors.js";
+import ApiError from "cgps-stdlib/errors/api-error.js";
+import projectSlugToId from "cgps-stdlib/urls/parse-slug";
+
 import logger from "cgps-application-server/logger";
 
 import getUserMiddleware from "cgps-application-server/middleware/get-user";
@@ -8,6 +11,7 @@ import * as ProjectsService from "../../../services/projects";
 
 async function findProjectState(stateId, projectModel) {
   const db = await databaseService();
+
   const id = stateId || projectModel.json.defaultView;
 
   if (typeof id === "string") {
@@ -23,30 +27,28 @@ async function findProjectState(stateId, projectModel) {
   }
 }
 
-function catchApiErrors(func) {
-  return async (req, res) => {
-    try {
-      await func(req, res);
-    }
-    catch (err) {
-      if (err instanceof ApiError) {
-        res.status(err.statusCode).end(err.message);
-      }
-      else {
-        throw err;
-      }
-    }
-  };
-}
+async function handler(req, res) {
+  const db = await databaseService();
 
-export default catchApiErrors(async (req, res) => {
   const user = await getUserMiddleware(req, res);
 
-  const [ projectId, stateId ] = req.query.project.split("/");
-  const projectModel = await ProjectsService.getProjectDocument(projectId, user);
+  if (!req.query.project) {
+    throw new ApiError(400);
+  }
 
-  // eslint-disable-next-line no-extra-boolean-cast
-  if (!!projectModel.binned) {
+  const [ projectIdOrSlug, stateId ] = req.query.project.split("/");
+
+  const identifier = projectSlugToId(projectIdOrSlug);
+
+  const projectModel = await db.models.Project.findByIdentifier(
+    identifier,
+    "viewer",
+    user?.id,
+  );
+
+  // const projectModel = await ProjectsService.getProjectDocument(projectId, user);
+
+  if (!!projectModel.binned) { // eslint-disable-line no-extra-boolean-cast
     throw new ApiError(404, "not found");
   }
 
@@ -76,4 +78,6 @@ export default catchApiErrors(async (req, res) => {
   jsonDocument._.linkedProjectId = projectModel.linkedProjectId;
 
   return res.json(jsonDocument);
-});
+}
+
+export default catchApiErrors(handler);

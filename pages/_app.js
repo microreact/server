@@ -10,6 +10,7 @@ import { SnackbarProvider } from "notistack";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
+import { SWRConfig } from "swr";
 
 import "@fontsource/space-grotesk/400.css";
 import "@fontsource/space-grotesk/700.css";
@@ -25,6 +26,10 @@ import DefaultLayout from "../components/default-layout";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
+
+const swrGlobalConfig = {
+  fetcher: (resource, init) => fetch(resource, init).then((res) => res.json()),
+};
 
 export default function MyApp(props) {
   const { Component, emotionCache = clientSideEmotionCache } = props;
@@ -42,9 +47,11 @@ export default function MyApp(props) {
 
         <AuthSessionProvider session={session}>
           <SnackbarProvider>
-            <DefaultLayout>
-              <Component {...pageProps} />
-            </DefaultLayout>
+            <SWRConfig value={swrGlobalConfig}>
+              <DefaultLayout>
+                <Component {...pageProps} />
+              </DefaultLayout>
+            </SWRConfig>
           </SnackbarProvider>
         </AuthSessionProvider>
       </ThemeProvider>

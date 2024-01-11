@@ -30,19 +30,19 @@ async function findProjectDocuments(query, user) {
       linkedProjectId: null,
     },
     {
-      _id: 0,
+      "_id": 0,
       "json.meta.description": 1,
       "json.meta.name": 1,
-      access: 1,
-      alias: 1,
-      binned: 1,
-      createdAt: 1,
-      folder: 1,
-      id: 1,
-      owner: 1,
-      starred: 1,
-      updatedAt: 1,
-      version: 1,
+      "access": 1,
+      "alias": 1,
+      "binned": 1,
+      "createdAt": 1,
+      "folder": 1,
+      "id": 1,
+      "owner": 1,
+      "starred": 1,
+      "updatedAt": 1,
+      "version": 1,
     },
     {
       sort: { updatedAt: -1 },
@@ -105,7 +105,11 @@ export async function checkProjectAlias(projectAlias, user) {
  * @throws {ApiError} 401 Unauthorized: if the project is not public and the user is anonymous.
  * @throws {ApiError} 403 Forbidden: if the project is not public and the signed-in user does not have access.
 */
-export async function getProjectDocument(projectIdOrSlug, user) {
+export async function getProjectDocument(
+  projectIdOrSlug,
+  user,
+  role = "viewer",
+) {
   const db = await databaseService();
 
   const identifier = projectSlugToId(projectIdOrSlug);

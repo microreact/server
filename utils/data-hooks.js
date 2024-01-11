@@ -1,18 +1,20 @@
 /* eslint-disable no-throw-literal */
 
-import swr, { mutate } from "swr";
+import swr, { mutate as globalMutate } from "swr";
 
 function apiEndpointHook(endpointUrl) {
-  const { data, error } = swr(endpointUrl);
+  const { data, error, isLoading, isValidating, mutate } = swr(endpointUrl);
   return {
     data,
-    isLoading: !error && !data,
+    isLoading,
+    isValidating,
     isError: error,
+    mutate,
   };
 }
 
 function apiEndpointMutation(endpointUrl, data = undefined, update = true) {
-  return mutate(
+  return globalMutate(
     endpointUrl,
     data,
     update,
