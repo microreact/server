@@ -31,15 +31,16 @@ async function findProjectDocuments(query, user) {
     },
     {
       "_id": 0,
-      "json.meta.description": 1,
-      "json.meta.name": 1,
       "access": 1,
       "alias": 1,
       "binned": 1,
       "createdAt": 1,
       "folder": 1,
       "id": 1,
+      "json.meta.description": 1,
+      "json.meta.name": 1,
       "owner": 1,
+      "shares": 1,
       "starred": 1,
       "updatedAt": 1,
       "version": 1,
@@ -51,21 +52,23 @@ async function findProjectDocuments(query, user) {
   );
 
   for (const projectDoc of projectDocs) {
-    const isOwner = db.models.Project.prototype.hasOnwerAccess.call(projectDoc, user);
+    const role = db.models.Project.prototype.getUserRole.call(projectDoc, user?.id);
+    const hasOnwerAccess = role === "owner";
     if (projectDoc?.json?.meta) {
       docs.push({
-        id: projectDoc.id,
-        name: projectDoc.json.meta.name,
-        description: projectDoc.json.meta.description,
-        image: projectDoc.json.image,
-        createdAt: projectDoc.createdAt,
-        updatedAt: projectDoc.updatedAt,
-        isOwner,
-        access: isOwner ? (projectDoc.access ?? 0) : undefined,
-        starred: isOwner ? (projectDoc.starred ?? false) : undefined,
-        binned: isOwner ? (projectDoc.binned ?? false) : undefined,
-        folder: isOwner ? (projectDoc.folder) : undefined,
-        url: db.models.Project.projectUrl(projectDoc.version, projectDoc.id, projectDoc.json.meta.name),
+        "id": projectDoc.id,
+        "name": projectDoc.json.meta.name,
+        "description": projectDoc.json.meta.description,
+        "image": projectDoc.json.image,
+        "createdAt": projectDoc.createdAt,
+        "updatedAt": projectDoc.updatedAt,
+        "isOwner": hasOnwerAccess,
+        "shared": !hasOnwerAccess,
+        "access": hasOnwerAccess ? (projectDoc.access ?? 0) : undefined,
+        "starred": hasOnwerAccess ? (projectDoc.starred ?? false) : undefined,
+        "binned": hasOnwerAccess ? (projectDoc.binned ?? false) : undefined,
+        "folder": hasOnwerAccess ? (projectDoc.folder) : undefined,
+        "url": db.models.Project.projectUrl(projectDoc.version, projectDoc.id, projectDoc.json.meta.name),
       });
     }
   }
@@ -93,60 +96,6 @@ export async function checkProjectAlias(projectAlias, user) {
   );
 
   return !projectDocument;
-}
-
-/**
- * Finds a project documents by project ID or project slug.
- * @param  {string} projectIdOrSlug - The shortened v4 UUID of the project, or its slug
- * @param  {UserModel} user - The signed-in user, or null for anonymous users
- * @return {ProjectModel} A Project model if the project is found and the user has access to it, otherwise throws an ApiError.
- * @throws {ApiError} 400 Invalid request: if the project ID is invalid.
- * @throws {ApiError} 404 Not found: if the project is not found.
- * @throws {ApiError} 401 Unauthorized: if the project is not public and the user is anonymous.
- * @throws {ApiError} 403 Forbidden: if the project is not public and the signed-in user does not have access.
-*/
-export async function getProjectDocument(
-  projectIdOrSlug,
-  user,
-  role = "viewer",
-) {
-  const db = await databaseService();
-
-  const identifier = projectSlugToId(projectIdOrSlug);
-
-  const projectDocument = await db.models.Project.findOne(
-    {
-      $or: [
-        { id: identifier },
-        { alias: identifier },
-      ],
-    }
-  );
-
-  // Check that the project do exist
-  if (!projectDocument) {
-    throw new ApiError(404);
-  }
-
-  // let originalProject = projectDocument;
-  // if (projectDocument.linkedProjectId) {
-  //   originalProject = await getProjectDocument(projectDocument.linkedProjectId, user);
-  // }
-
-  // A private project can be accessed by the user who created it
-  if (projectDocument.access === 0) {
-    if (user?.id) {
-      // a private project can be accessed by the user who created it
-      if (!projectDocument.isAccessibleBy(user)) {
-        throw new ApiError(403); // Forbidden
-      }
-    }
-    else {
-      throw new ApiError(401); // Unauthorized
-    }
-  }
-
-  return projectDocument;
 }
 
 export async function getProjectMetadata(projectIdOrSlug) {

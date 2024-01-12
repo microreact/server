@@ -1,10 +1,12 @@
+const ObjectId = require("mongodb").ObjectId;
+
 const accessLevelToAccessCode = require("./access-level-to-access-code.js");
 
 function mapAccessLevel(role) {
   if (role === "viewer") {
     return {
       generalAccess: ["restricted"],
-      userAccess: ["viewer", "editor", "manager"],
+      userAccess: [null, "viewer", "editor", "manager"],
     };
   }
 
@@ -55,7 +57,7 @@ function createAccessQuery(
 
   if (userAccess.length && userId) {
     query.$or.push({
-      "shares.user": userId,
+      "shares.user": new ObjectId(userId),
       "shares.role": { $in: userAccess },
     });
   }

@@ -77,15 +77,6 @@ export function removeShareAccess(projectId, email, kind) {
   });
 }
 
-export function revokeInvitation(projectId, kind, email) {
-  return apiRequest({
-    method: "post",
-    url: "/invitations/revoke",
-    data: { kind, email },
-    params: { project: projectId },
-  });
-}
-
 export function updateProject(projectId, projectJson) {
   return apiRequest({
     method: "post",

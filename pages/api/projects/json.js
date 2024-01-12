@@ -1,6 +1,5 @@
 import catchApiErrors from "cgps-stdlib/errors/catch-api-errors.js";
 import ApiError from "cgps-stdlib/errors/api-error.js";
-import projectSlugToId from "cgps-stdlib/urls/parse-slug";
 
 import logger from "cgps-application-server/logger";
 
@@ -38,15 +37,11 @@ async function handler(req, res) {
 
   const [ projectIdOrSlug, stateId ] = req.query.project.split("/");
 
-  const identifier = projectSlugToId(projectIdOrSlug);
-
   const projectModel = await db.models.Project.findByIdentifier(
-    identifier,
+    projectIdOrSlug,
     "viewer",
     user?.id,
   );
-
-  // const projectModel = await ProjectsService.getProjectDocument(projectId, user);
 
   if (!!projectModel.binned) { // eslint-disable-line no-extra-boolean-cast
     throw new ApiError(404, "not found");
@@ -74,7 +69,10 @@ async function handler(req, res) {
   jsonDocument._.id = projectModel.id;
   jsonDocument._.version = projectModel.version;
   jsonDocument._.url = projectModel.url();
-  jsonDocument._.isOwner = projectModel.hasOnwerAccess(user);
+  jsonDocument._.role = projectModel.getUserRole(user?.id);
+  jsonDocument._.isOwner = jsonDocument._.role === "owner";
+  jsonDocument._.isManager = jsonDocument._.isOwner || jsonDocument._.role === "manager";
+  jsonDocument._.isEditor = jsonDocument._.isManager || jsonDocument._.role === "editor";
   jsonDocument._.linkedProjectId = projectModel.linkedProjectId;
 
   return res.json(jsonDocument);

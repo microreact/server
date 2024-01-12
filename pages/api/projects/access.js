@@ -2,7 +2,6 @@ import { ApiError } from "next/dist/server/api-utils";
 import requireUserMiddleware from "cgps-application-server/middleware/require-user";
 import logger from "cgps-application-server/logger";
 
-import * as ProjectsService from "../../../services/projects";
 import databaseService from "../../../services/dataabse";
 
 import accessCodeToAccessLevel from "../../../models/project/statics/access-code-to-access-level.js";
@@ -10,14 +9,13 @@ import accessLevelToAccessCode from "../../../models/project/statics/access-leve
 
 export default async function (req, res) {
   const user = await requireUserMiddleware(req, res);
-
-  const projectModel = await ProjectsService.getProjectDocument(req.query?.project, user);
-
-  if (!projectModel.hasOnwerAccess(user)) {
-    throw new ApiError(403);
-  }
-
   const db = await databaseService();
+
+  const projectModel = await db.models.Project.findByIdentifier(
+    req.query?.project,
+    "manager",
+    user?.id,
+  );
 
   if (req.method === "GET") {
     const sharedWithUserIds = [];

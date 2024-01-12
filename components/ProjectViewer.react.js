@@ -54,7 +54,7 @@ class ProjectViewer extends React.PureComponent {
   */
   canEdit = () => {
     return (
-      (this.props.projectProps === null || this.state.projectProps.isOwner)
+      (this.props.projectProps === null || this.state.projectProps.isEditor)
     );
   }
 
@@ -64,7 +64,7 @@ class ProjectViewer extends React.PureComponent {
   */
   canChangeSharingSettings = () => {
     return (
-      this.state.projectProps.isOwner
+      this.state.projectProps.isManager
     );
   }
 

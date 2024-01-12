@@ -32,7 +32,7 @@ async function handler(req, res) {
     model.shares.find((x) => x?.email === email && x.kind === "invitation")
   );
 
-  if (share === -1) {
+  if (!share) {
     const invitedUser = await db.models.User.findOne(
       { email },
       { _id: 1 },

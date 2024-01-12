@@ -19,7 +19,7 @@ const roleLabels = {
 async function handler(req, res) {
   const db = await databaseService();
 
-  // Only logged in users can send invitations
+  // Only logged in users can send share requests
   const user = await requireUserMiddleware(req, res);
 
   const model = await db.models.Project.findByIdentifier(

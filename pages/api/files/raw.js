@@ -13,7 +13,7 @@ export const config = {
 };
 
 export default async function (req, res) {
-  await databaseService();
+  const db = await databaseService();
 
   const fileHash = req.query.id || req.query.hash || (Object.keys(req.query)?.[0]);
   if (!fileHash) {
@@ -27,7 +27,11 @@ export default async function (req, res) {
 
   const user = await getUserMiddleware(req, res);
   const parts = refererUrl.pathname.split("/");
-  const projectModel = await ProjectsService.getProjectDocument(parts[2], user);
+  const projectModel = await db.models.Project.findByIdentifier(
+    parts[2],
+    "viewer",
+    user?.id,
+  );
   const jsonDocument = await ProjectsService.toViewerJson(projectModel);
 
   let fileFound = false;

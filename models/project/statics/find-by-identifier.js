@@ -1,3 +1,5 @@
+const projectSlugToId = require("cgps-stdlib/urls/parse-slug.js");
+
 const ApiError = require("cgps-stdlib/errors/api-error.js").default;
 
 /**
@@ -11,13 +13,15 @@ const ApiError = require("cgps-stdlib/errors/api-error.js").default;
  * @throws {ApiError} 403 Forbidden: if the project is not public and the signed-in user does not have access.
 */
 async function findByIdentifier(
-  identifier,
+  projectIdOrSlug,
   role,
   userId,
 ) {
-  if (!identifier) {
+  if (!projectIdOrSlug) {
     throw new ApiError(400, "Invalid Request");
   }
+
+  const identifier = projectSlugToId(projectIdOrSlug);
 
   const accessQuery = this.createAccessQuery(
     role,
@@ -27,7 +31,7 @@ async function findByIdentifier(
   const idQuery = {
     "$or": [
       { id: identifier },
-      { alias: identifier },
+      { alias: projectIdOrSlug },
     ],
   };
 
