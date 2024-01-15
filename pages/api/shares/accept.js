@@ -45,21 +45,24 @@ export default async function (req, res) {
     projectModel.shares.find((x) => x.token === token && x.kind === "invitation")
   );
 
-  if (!invitation) {
-    return res.redirect(projectModel.url());
+  if (invitation) {
+    remove(
+      projectModel.shares,
+      invitation,
+    );
+
+    if (!projectModel.shares.find((x) => x.user?.equals(user.id))) {
+      projectModel.shares.push({
+        "createdAt": new Date(),
+        "kind": "user",
+        "role": invitation.role ?? "viewer",
+        "token": token,
+        "user": user.id,
+      });
+    }
+
+    await projectModel.save();
   }
-
-  remove(projectModel.shares, invitation);
-
-  if (!projectModel.shares.find((x) => x.user?.equals(user.id))) {
-    projectModel.shares.push({
-      kind: "user",
-      createdAt: new Date(),
-      user: user.id,
-    });
-  }
-
-  await projectModel.save();
 
   return res.redirect(projectModel.url());
 }

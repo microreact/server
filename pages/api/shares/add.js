@@ -40,14 +40,16 @@ async function handler(req, res) {
 
   for (const email of emails) {
     let invitation = (
-      model.shares.find((x) => x.email === email && x.kind === "invitation")
+      model.shares.find((x) => x.email === email)
     );
 
     if (!invitation) {
       invitation = {
-        token: shortUUID.generate(),
-        email,
-        kind: "invitation",
+        "token": shortUUID.generate(),
+        "email": email,
+        "kind": "invitation",
+        "role": role,
+        "createdAt": new Date(),
       };
       model.shares.push(invitation);
     }
