@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "NEXTAUTH_URL=http://localhost:8082 next dev --port=8082",
     "build": "next build",
+    "lint": "next lint",
     "local": "NEXTAUTH_URL=http://localhost:8082 next start -- -p 8082",
     "start": "next start",
     "mm": "migrate-mongo",
