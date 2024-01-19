@@ -27,6 +27,7 @@ export default async function (req, res) {
 
   const user = await getUserMiddleware(req, res);
   const parts = refererUrl.pathname.split("/");
+  console.log({refererUrl, parts, "req.headers.referer": req.headers.referer})
   const projectModel = await ProjectsService.getProjectDocument(parts[2], user);
   const jsonDocument = await ProjectsService.toViewerJson(projectModel);
 
