@@ -21,11 +21,6 @@ export default async function (req, res) {
 
   projectModel.owner = user.id;
 
-  // if (req.query.linkedProjectId) {
-  //   const linkedProjectModel = await ProjectsService.getProjectDocument(req.query.linkedProjectId, user);
-  //   projectModel.linkedProjectId = linkedProjectModel.linkedProjectId ?? linkedProjectModel.id;
-  // }
-
   if (req.query.access === "private") {
     projectModel.access = 0;
   }
@@ -38,7 +33,7 @@ export default async function (req, res) {
   logger.info("project created", { project: projectModel.id }, { user, req, res });
 
   return res.json({
-    isOwner: true,
+    role: projectModel.getUserRole(user.id),
     id: projectModel.id,
     url: projectModel.url(),
   });

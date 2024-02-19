@@ -1,17 +1,19 @@
-import { ApiError } from "next/dist/server/api-utils";
 import requireUserMiddleware from "cgps-application-server/middleware/require-user";
 import logger from "cgps-application-server/logger";
 
 import * as ProjectsService from "../../../services/projects";
+import databaseService from "../../../services/dataabse";
 
 export default async function (req, res) {
+  const db = await databaseService();
+
   const user = await requireUserMiddleware(req, res);
 
-  const projectModel = await ProjectsService.getProjectDocument(req.query?.project, user);
-
-  if (!projectModel.hasOnwerAccess(user)) {
-    throw new ApiError(403);
-  }
+  const projectModel = await db.models.Project.findByIdentifier(
+    req.query?.project,
+    "owner",
+    user?.id,
+  );
 
   const folderIdOrName = req.body.folder ?? null;
 

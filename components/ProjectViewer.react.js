@@ -13,7 +13,7 @@ import useLeavePageConfirm from "../hooks/leave-page-confirm";
 import * as Projects from "../utils/projects";
 
 import ProjectSaveDialog from "./ProjectSaveDialog";
-import ProjectAccessDialog from "./ProjectAccessDialog";
+import ProjectAccessDialog from "./access-dialog/index.js";
 import ManageAccountsIcon from "./ManageAccountsIcon";
 import EditOffMenu from "./EditOffMenu.react";
 import SaveButton from "./SaveButton";
@@ -54,7 +54,7 @@ class ProjectViewer extends React.PureComponent {
   */
   canEdit = () => {
     return (
-      (this.props.projectProps === null || this.state.projectProps.isOwner)
+      (this.props.projectProps === null || this.state.projectProps.isEditor)
     );
   }
 
@@ -64,7 +64,7 @@ class ProjectViewer extends React.PureComponent {
   */
   canChangeSharingSettings = () => {
     return (
-      this.state.projectProps.isOwner
+      this.state.projectProps.isManager
     );
   }
 

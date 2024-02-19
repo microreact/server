@@ -9,5 +9,6 @@ module.exports = {
   },
   "rules": {
     "dot-notation": 0,
+    "import/extensions": 0,
   },
 };

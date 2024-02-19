@@ -2,19 +2,20 @@ import { ApiError } from "next/dist/server/api-utils";
 import requireUserMiddleware from "cgps-application-server/middleware/require-user";
 import logger from "cgps-application-server/logger";
 
-import * as ProjectsService from "../../../services/projects";
 import databaseService from "../../../services/dataabse";
+
+import accessCodeToAccessLevel from "../../../models/project/statics/access-code-to-access-level.js";
+import accessLevelToAccessCode from "../../../models/project/statics/access-level-to-access-code.js";
 
 export default async function (req, res) {
   const user = await requireUserMiddleware(req, res);
-
-  const projectModel = await ProjectsService.getProjectDocument(req.query?.project, user);
-
-  if (!projectModel.hasOnwerAccess(user)) {
-    throw new ApiError(403);
-  }
-
   const db = await databaseService();
+
+  const projectModel = await db.models.Project.findByIdentifier(
+    req.query?.project,
+    "manager",
+    user?.id,
+  );
 
   if (req.method === "GET") {
     const sharedWithUserIds = [];
@@ -49,6 +50,7 @@ export default async function (req, res) {
           kind: share.kind,
           createdAt: share.createdAt,
           email: userEmailById.get(share.user.toString()),
+          role: share.role ?? "viewer",
         });
       }
       else if (share.kind === "invitation") {
@@ -56,25 +58,25 @@ export default async function (req, res) {
           kind: "invitation",
           createdAt: share.createdAt,
           email: share.email,
+          role: share.role ?? "viewer",
         });
       }
     }
 
     return res.json({
       id: projectModel.id,
-      access: projectModel.access,
       alias: projectModel.alias,
-      shares,
-      url: projectModel.url(),
+      linkUrl: projectModel.url(),
       aliasUrl: projectModel.alias && projectModel.aliasUrl(),
+      accessLevel: accessCodeToAccessLevel(projectModel.access),
+      shares,
     });
   }
 
   if (req.method === "POST") {
-    const access = parseInt(req.body.access, 10);
-
-    if (access === 0 || access === 1 || access === 4) {
-      projectModel.access = access;
+    const access = req.body.access;
+    if (access === "private" || access === "restricted") {
+      projectModel.access = accessLevelToAccessCode(access);
     }
     else {
       throw new ApiError(400, "Bad Request");

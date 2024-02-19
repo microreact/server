@@ -27,32 +27,6 @@ export default class MyDocument extends Document {
             href="https://cdn.jsdelivr.net/npm/flexlayout-react@0.6.10/style/light.css"
           />
 
-          <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@fontsource/work-sans@4.5.12/index.css"
-          />
-          <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@fontsource/work-sans@4.5.12/500.css"
-          />
-          <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@4.5.0/index.css"
-          />
-          <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@4.5.0/500.css"
-          />
-
-          <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/ag-grid-community@29.2.0/styles/ag-grid.min.css"
-          />
-          <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/ag-grid-community@29.2.0/styles/ag-theme-alpine.min.css"
-          />
-
           {/* Inject MUI styles first to match with the prepend: true configuration. */}
           {this.props.emotionStyleTags}
         </Head>
