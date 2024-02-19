@@ -50,30 +50,21 @@ export function saveProject(projectJson, linkedProjectId) {
   });
 }
 
-export function addShareAccess(projectId, emails, role) {
+export function sendInvitation(projectId, emails) {
   return apiRequest({
-    data: { emails, role },
     method: "post",
-    params: { id: projectId },
-    url: "/shares/add",
+    url: "/invitations/send",
+    data: { emails },
+    params: { project: projectId },
   });
 }
 
-export function updateShareAccess(projectId, email, role) {
+export function revokeInvitation(projectId, kind, email) {
   return apiRequest({
-    data: { email, role },
     method: "post",
-    params: { id: projectId },
-    url: "/shares/update",
-  });
-}
-
-export function removeShareAccess(projectId, email, kind) {
-  return apiRequest({
-    data: { email, kind },
-    method: "post",
-    params: { id: projectId },
-    url: "/shares/remove",
+    url: "/invitations/revoke",
+    data: { kind, email },
+    params: { project: projectId },
   });
 }
 

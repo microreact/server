@@ -8,10 +8,9 @@ schema.pre("save", require("./hooks/pre-save"));
 
 schema.statics.projectUrl = require("./statics/project-url");
 schema.statics.imageUrl = require("./statics/image-url");
-schema.statics.findByIdentifier = require("./statics/find-by-identifier");
-schema.statics.createAccessQuery = require("./statics/create-access-query");
 
-schema.methods.getUserRole = require("./methods/get-user-role");
+schema.methods.isAccessibleBy = require("./methods/is-accessible-by");
+schema.methods.hasOnwerAccess = require("./methods/has-onwer-access");
 schema.methods.saveJson = require("./methods/save-json");
 schema.methods.updateStats = require("./methods/update-stats");
 schema.methods.url = function url() {

@@ -333,7 +333,7 @@ class ProjectSaveDialog extends React.PureComponent {
             </Button>
 
             {
-              props.projectProps.isEditor && (
+              props.projectProps.isOwner && (
                 <UpdateProjectButton
                   handleUpdateOnServer={this.handleUpdateOnServer}
                 />

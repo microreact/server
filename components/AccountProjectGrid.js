@@ -169,7 +169,6 @@ function AccountProjectGrid(props) {
                         createdAt={item.createdAt}
                         destination={item.destination}
                         folder={item.folder}
-                        shared={item.shared}
                         id={item.id}
                         name={item.name}
                         onDelete={() => handleDeleteProject(data, item.id, !item.binned)}

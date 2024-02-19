@@ -59,7 +59,7 @@ module.exports = ({
     return [
       {
         source: "/accept-invitation/:token",
-        destination: "/api/shares/accept",
+        destination: "/api/invitations/accept",
       },
     ];
   },
