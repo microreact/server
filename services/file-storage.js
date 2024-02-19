@@ -174,7 +174,7 @@ function readText(fileHash) {
 
 function fileUri(fileHash) {
   // return `microreact://${fileHash}`;
-  return UrlService.absolute(`api/files/raw?${fileHash}`);
+  return UrlService.relative(`api/files/raw?${fileHash}`);
 }
 
 function fileSize(fileHash) {

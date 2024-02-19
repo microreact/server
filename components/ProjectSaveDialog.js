@@ -138,6 +138,15 @@ function getInitialState() {
   };
 }
 
+async function serialiseLinkedFiles(files) {
+  for (const file of Object.values(files)) {
+    if (file.url && file.url.includes("/api/files/raw?")) {
+      file.blob = await fetch(file.url).then((x) => x.blob());
+      file.url = undefined;
+    }
+  }
+}
+
 class ProjectSaveDialog extends React.PureComponent {
 
   constructor() {
@@ -156,8 +165,10 @@ class ProjectSaveDialog extends React.PureComponent {
 
   handleDownloadFile = () => {
     this.createProjectDocument()
-      .then((doc) => {
-        return viewerUtils.files.serialiseBlobs(doc.files).then(() => doc);
+      .then(async (doc) => {
+        await serialiseLinkedFiles(doc.files);
+        await viewerUtils.files.serialiseBlobs(doc.files);
+        return doc;
       })
       .then((data) => {
         viewerUtils.downloads.downloadDataUrl(
