@@ -53,7 +53,7 @@ async function findProjectDocuments(query, user) {
 
   for (const projectDoc of projectDocs) {
     const role = db.models.Project.prototype.getUserRole.call(projectDoc, user?.id);
-    const hasOnwerAccess = role === "owner";
+    const hasOnwerAccess = (role === "owner");
     if (projectDoc?.json?.meta) {
       docs.push({
         "id": projectDoc.id,
@@ -62,6 +62,7 @@ async function findProjectDocuments(query, user) {
         "image": projectDoc.json.image,
         "createdAt": projectDoc.createdAt,
         "updatedAt": projectDoc.updatedAt,
+        "role": role,
         "isOwner": hasOnwerAccess,
         "shared": !hasOnwerAccess,
         "access": hasOnwerAccess ? (projectDoc.access ?? 0) : undefined,

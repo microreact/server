@@ -90,19 +90,25 @@ function AccountProjectCard(props) {
           )
       }
 
-      {
-        (!props.shared) && (
-          <CardActions disableSpacing className="main">
+      <CardActions disableSpacing className="main">
+        {
+          (props.role === "owner") && (
             <MoveProjectToFolderMenu
               projectId={props.id}
               folder={props.folder}
               onMove={props.onMove}
             />
-
+          )
+        }
+        {
+          (props.role === "owner" || props.role === "manager") && (
             <ProjectAccessTrigger
               projectId={props.id}
             />
-
+          )
+        }
+        {
+          (props.role === "owner") && (
             <IconButton
               title={props.binned ? "Restore Project" : "Delete Project"}
               onClick={props.onDelete}
@@ -115,9 +121,10 @@ function AccountProjectCard(props) {
                   <DeleteOutlineOutlinedIcon fontSize="inherit" />
               }
             </IconButton>
-          </CardActions>
-        )
-      }
+          )
+        }
+      </CardActions>
+
     </Card>
   );
 }
@@ -125,10 +132,11 @@ function AccountProjectCard(props) {
 AccountProjectCard.propTypes = {
   access: PropTypes.number,
   binned: PropTypes.bool,
-  folder: PropTypes.string,
-  name: PropTypes.string,
   createdAt: PropTypes.string,
+  folder: PropTypes.string,
   id: PropTypes.string.isRequired,
+  role: PropTypes.s,
+  name: PropTypes.string,
   onDelete: PropTypes.func.isRequired,
   onLoading: PropTypes.func.isRequired,
   onMove: PropTypes.func.isRequired,
