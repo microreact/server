@@ -1,6 +1,6 @@
 {
   "name": "microreact",
-  "version": "257.0.0",
+  "version": "258.0.0",
   "private": true,
   "scripts": {
     "dev": "NEXTAUTH_URL=http://localhost:8082 next dev --port=8082",
