@@ -32,9 +32,7 @@ export default async function (req, res) {
 
   logger.info("project created", { project: projectModel.id }, { user, req, res });
 
-  return res.json({
-    role: projectModel.getUserRole(user.id),
-    id: projectModel.id,
-    url: projectModel.url(),
-  });
+  return res.json(
+    projectModel.getProjectProps(user)
+  );
 }

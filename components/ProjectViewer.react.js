@@ -135,6 +135,10 @@ class ProjectViewer extends React.PureComponent {
           projectProps: {
             ...this.state.projectProps,
             ...savedProjectProps,
+            "role": "owner",
+            "isOwner": true,
+            "isManager": true,
+            "isEditor": true,
           },
         },
         resolve,

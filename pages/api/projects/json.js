@@ -65,15 +65,7 @@ async function handler(req, res) {
   jsonDocument.meta.createdAt = projectModel.createdAt.toISOString();
   jsonDocument.meta.updatedAt = projectModel.updatedAt.toISOString();
 
-  jsonDocument._ = {};
-  jsonDocument._.id = projectModel.id;
-  jsonDocument._.version = projectModel.version;
-  jsonDocument._.url = projectModel.url();
-  jsonDocument._.role = projectModel.getUserRole(user?.id);
-  jsonDocument._.isOwner = jsonDocument._.role === "owner";
-  jsonDocument._.isManager = jsonDocument._.isOwner || jsonDocument._.role === "manager";
-  jsonDocument._.isEditor = jsonDocument._.isManager || jsonDocument._.role === "editor";
-  jsonDocument._.linkedProjectId = projectModel.linkedProjectId;
+  jsonDocument._ = projectModel.getProjectProps(user);
 
   return res.json(jsonDocument);
 }
