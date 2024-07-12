@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 module.exports = {
   async up(db, client) {
     let index = 0;
