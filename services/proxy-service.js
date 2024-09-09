@@ -164,6 +164,6 @@ function rewriteUrl(
   return getStream(url, headers);
 }
 
-module.exports = {
+export default {
   getStream: rewriteUrl,
 };
