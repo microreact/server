@@ -158,7 +158,12 @@ class ProjectSaveDialog extends React.PureComponent {
 
   createProjectDocument = async () => {
     const project = await this.state.jsonDataPromise;
-    project.meta.name = this.state.name;
+    if (this.props.projectProps?.id && project.meta.name === this.state.name) {
+      project.meta.name = `Copy of ${this.state.name}`;
+    }
+    else {
+      project.meta.name = this.state.name;
+    }
     project.meta.description = this.state.description;
     return project;
   }
@@ -212,7 +217,7 @@ class ProjectSaveDialog extends React.PureComponent {
       .then((projectJson) => {
         return Projects.saveProjectOnServer(projectJson)
           .then((savedProjectProps) => {
-            this.props.onSavedOnServer(savedProjectProps);
+            this.props.onSavedOnServer(savedProjectProps, projectJson);
           });
       })
       .catch((error) => {
@@ -235,7 +240,7 @@ class ProjectSaveDialog extends React.PureComponent {
               projectUrl: savedProjectProps.url,
               savingMode: "done",
             });
-            this.props.onUpdatedOnServer(savedProjectProps);
+            this.props.onUpdatedOnServer(savedProjectProps, projectJson);
           });
       })
       .catch((error) => {

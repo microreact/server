@@ -7,6 +7,7 @@ import React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 
 import MicroreactViewer, { utils as ViewerUtils, UiIconButton, selectors as viewerSelectors, store as viewerStore, actions as viewerActions } from "microreact-viewer/index";
+import * as metaActions from "microreact-viewer/actions/meta.js";
 
 import fetcher from "../utils/viewer-fetch-proxy";
 import useLeavePageConfirm from "../hooks/leave-page-confirm";
@@ -120,9 +121,10 @@ class ProjectViewer extends React.PureComponent {
       .then(this.setSavedProjectProps);
   }
 
-  setSavedProjectProps = (
-    savedProjectProps,
-  ) => {
+  setSavedProjectProps = (savedProjectProps, projectJson) => {
+    viewerStore.dispatch(
+      metaActions.update("name", projectJson.meta.name)
+    );
     viewerStore.dispatch(
       viewerActions.config({
         isDirty: false,
@@ -228,9 +230,10 @@ class ProjectViewer extends React.PureComponent {
             () => this.setState({ isSaveDialogOpen: false })
           }
           onSavedOnServer={
-            (savedProjectProps) => {
+            (savedProjectProps, projectJson) => {
               this.setSavedProjectProps(
                 savedProjectProps,
+                projectJson,
               )
                 .then(
                   () => this.setState(
@@ -241,9 +244,10 @@ class ProjectViewer extends React.PureComponent {
             }
           }
           onUpdatedOnServer={
-            (savedProjectProps) => {
+            (savedProjectProps, projectJson) => {
               this.setSavedProjectProps(
                 savedProjectProps,
+                projectJson,
               );
             }
           }
