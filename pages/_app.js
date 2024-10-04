@@ -19,9 +19,9 @@ import "@fontsource/open-sans/700.css";
 import "@sweetalert2/theme-material-ui/material-ui.css";
 import "microreact-viewer/styles/index.css";
 
-import muiTheme from "../utils/theme";
-import createEmotionCache from "../utils/create-emotion-cache";
-import DefaultLayout from "../components/default-layout";
+import { muiTheme } from "../utils/theme.js";
+import createEmotionCache from "../utils/create-emotion-cache.js";
+import DefaultLayout from "../components/default-layout/index.js";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
