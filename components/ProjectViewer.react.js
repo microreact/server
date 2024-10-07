@@ -117,14 +117,20 @@ class ProjectViewer extends React.PureComponent {
 
   handleMakeCopy = () => {
     viewerStore.dispatch(viewerActions.save())
-      .then(Projects.saveProjectOnServer)
-      .then(this.setSavedProjectProps);
+      .then((projectJson) => {
+        projectJson.meta.name = `Copy of ${projectJson.meta.name}`;
+        return (
+          Projects.saveProjectOnServer(projectJson)
+            .then((savedProjectProps) => this.setSavedProjectProps(savedProjectProps, projectJson))
+        );
+      });
   }
 
   setSavedProjectProps = (savedProjectProps, projectJson) => {
     viewerStore.dispatch(
       metaActions.update("name", projectJson.meta.name)
     );
+
     viewerStore.dispatch(
       viewerActions.config({
         isDirty: false,
