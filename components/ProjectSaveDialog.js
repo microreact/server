@@ -158,12 +158,7 @@ class ProjectSaveDialog extends React.PureComponent {
 
   createProjectDocument = async () => {
     const project = await this.state.jsonDataPromise;
-    if (this.props.projectProps?.id && project.meta.name === this.state.name) {
-      project.meta.name = `Copy of ${this.state.name}`;
-    }
-    else {
-      project.meta.name = this.state.name;
-    }
+    project.meta.name = this.state.name;
     project.meta.description = this.state.description;
     return project;
   }
@@ -215,6 +210,9 @@ class ProjectSaveDialog extends React.PureComponent {
 
     this.createProjectDocument()
       .then((projectJson) => {
+        // if (this.props.projectProps?.id && projectJson.meta.name === this.state.name) {
+        //   projectJson.meta.name = `Copy of ${this.state.name}`;
+        // }
         return Projects.saveProjectOnServer(projectJson)
           .then((savedProjectProps) => {
             this.props.onSavedOnServer(savedProjectProps, projectJson);
