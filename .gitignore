@@ -38,3 +38,4 @@ config.json
 files/*
 microreact-live-d4085e8b9462.json
 logs/*
+.dockerignore
