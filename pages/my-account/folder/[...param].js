@@ -18,7 +18,7 @@ export async function getServerSideProps(context) {
   if (!user) {
     return {
       redirect: {
-        destination: "/signin",
+        destination: `/api/auth/signin?callbackUrl=${context.req.url}`,
         permanent: false,
       },
     };

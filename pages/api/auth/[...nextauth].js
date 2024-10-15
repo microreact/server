@@ -15,7 +15,7 @@ import { boolean } from "boolean";
 import serverRuntimeConfig from "../../../utils/server-runtime-config";
 
 const options = {
-  callbackUrl: "/welcome",
+  // callbackUrl: "/welcome",
 
   adapter: dbAdapter,
 
