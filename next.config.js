@@ -29,6 +29,7 @@ function getPublicRuntimeConfig(serverRuntimeConfig) {
   return {
     version: packageJson.version,
     mapboxApiAccessToken: serverRuntimeConfig.mapboxApiAccessToken,
+    downloadActions: serverRuntimeConfig.downloadActions,
     baseUrl: serverRuntimeConfig.baseUrl,
     customShowcase: serverRuntimeConfig.showcaseFolders?.length > 0,
   };
