@@ -22,7 +22,7 @@ export async function getServerSideProps(context) {
   if (!user) {
     return {
       redirect: {
-        destination: `/api/auth/signin?callbackUrl=${context.req.url}`,
+        destination: `/api/auth/signin?callbackUrl=/my-account/settings`,
         permanent: false,
       },
     };
