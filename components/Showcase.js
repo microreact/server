@@ -16,6 +16,15 @@ export default function Showcase() {
   return (
     <div className="mr-showcase-grid">
       <ShowcaseCard
+        title={<React.Fragment>CladeI-MPXV genomic diversity from 2018-2024 (DRC)</React.Fragment>}
+        linkUrl="/project/kHrhfmvv8GhRYUBUXxawoJ-cladei-mpxv-genomic-diversity-from-2018-2024-drc"
+        imageUrl="images/showcase/mpox.png"
+        subTitle="Eddy et al. 2024."
+        supportingText={<React.Fragment>Mpox in DRC is predominated by clade Ia, exhibiting high genetic diversity. (doi:10.1016/j.cell.2024.10.017)</React.Fragment>}
+        supportingLink="https://www.cell.com/cell/fulltext/S0092-8674%2824%2901199-1"
+      />
+
+    <ShowcaseCard
         title={<React.Fragment>Tracing the spread of carbapenem-resistant <i>Klebsiella pneumoniae</i></React.Fragment>}
         linkUrl="/project/EuSCAPE_Kp"
         imageUrl="images/showcase/euscape-cover.png"
@@ -24,7 +33,7 @@ export default function Showcase() {
         supportingLink="https://www.nature.com/articles/s41564-019-0492-8"
       />
 
-      <ShowcaseCard
+      {/* <ShowcaseCard
         title={<React.Fragment>SARS-CoV-2 in the UK</React.Fragment>}
         // linkUrl="https://microreact.org/project/qYq92faghSBX7fMBDN4A2a-cog-uk-global-tree"
         linkUrl="https://microreact.org/project/eDRh8N1gx66onGUvPAsQik-uk-sars-cov-2-2020-02-052022-02-11/"
@@ -33,7 +42,7 @@ export default function Showcase() {
         supportingText={<React.Fragment>Continuous evaluation of the lineages circulating in the UK<br/>(updated weekly)</React.Fragment>}
         supportingLink="https://www.cogconsortium.uk/data/"
         externalLink
-      />
+      /> */}
 
       <ShowcaseCard
         title={<React.Fragment><i>Streptococcus pneumoniae</i> PMEN2</React.Fragment>}
@@ -44,7 +53,7 @@ export default function Showcase() {
         supportingLink="http://www.ncbi.nlm.nih.gov/pubmed/24957517"
       />
 
-      <ShowcaseCard
+      {/* <ShowcaseCard
         title={<React.Fragment>Global Distribution of SARS-CoV-2</React.Fragment>}
         // linkUrl="https://microreact.org/project/tKgkqrqapvGa5RLL2azabp/0cc63c25"
         linkUrl="/project/6Y5GvktuhqgRRDwRQ7cUze-global-sars-cov-2-2019-12-242022-02-11/"
@@ -53,7 +62,7 @@ export default function Showcase() {
         supportingText={<React.Fragment>Continuous evaluation of the lineages circulating around the globe.<br/>(updated weekly)</React.Fragment>}
         supportingLink="https://www.cogconsortium.uk/data/"
         externalLink
-      />
+      /> */}
 
       <ShowcaseCard
         title="West African Ebola epidemic (2013-2016)"
