@@ -39,9 +39,9 @@ export default function Home() {
           <h2 className="mr-used-by-title">In partnership with</h2>
           <div className="mr-used-by-images">
             <img
-              src="images/partners/phe.png"
-              alt="Public Health England"
-              title="Public Health England"
+              src="images/partners/ukhsa.png"
+              alt="UKHSA"
+              title="UKHSA"
             />
             {/* <img
               src="images/partners/cdc.png"
