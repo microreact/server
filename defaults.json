@@ -41,7 +41,7 @@
 
   "baseUrl": "https://microreact.org/",
 
-  "bodySizeLimit": "16mb",
+  "bodySizeLimit": "128mb",
 
   "experimentalFlags": {
     "publicFolders": false

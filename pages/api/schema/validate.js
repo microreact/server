@@ -6,7 +6,7 @@ import schema from "../../../public/schema/v1";
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: "16mb",
+      sizeLimit: "128mb",
     },
   },
 };
