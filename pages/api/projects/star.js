@@ -2,7 +2,7 @@ import { ApiError } from "next/dist/server/api-utils";
 import requireUserMiddleware from "cgps-application-server/middleware/require-user";
 import logger from "cgps-application-server/logger";
 
-import databaseService from "../../../services/dataabse";
+import databaseService from "../../../services/database";
 
 export default async function (req, res) {
   const db = await databaseService();

@@ -1,7 +1,7 @@
 import requireUserMiddleware from "cgps-application-server/middleware/require-user";
 import logger from "cgps-application-server/logger";
 
-import dataabse from "../../../services/dataabse";
+import database from "../../../services/database";
 
 export const config = {
   api: {
@@ -15,7 +15,7 @@ export default async function (req, res) {
   // Only logged in users can create projects
   const user = await requireUserMiddleware(req, res);
 
-  const db = await dataabse();
+  const db = await database();
 
   const projectModel = new db.models.Project();
 

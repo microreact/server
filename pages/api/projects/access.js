@@ -2,7 +2,7 @@ import { ApiError } from "next/dist/server/api-utils";
 import requireUserMiddleware from "cgps-application-server/middleware/require-user";
 import logger from "cgps-application-server/logger";
 
-import databaseService from "../../../services/dataabse";
+import databaseService from "../../../services/database";
 
 import accessCodeToAccessLevel from "../../../models/project/statics/access-code-to-access-level.js";
 import accessLevelToAccessCode from "../../../models/project/statics/access-level-to-access-code.js";

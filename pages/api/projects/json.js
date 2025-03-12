@@ -5,7 +5,7 @@ import logger from "cgps-application-server/logger";
 
 import getUserMiddleware from "cgps-application-server/middleware/get-user";
 
-import databaseService from "../../../services/dataabse";
+import databaseService from "../../../services/database";
 import * as ProjectsService from "../../../services/projects";
 
 async function findProjectState(stateId, projectModel) {

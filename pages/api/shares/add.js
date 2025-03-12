@@ -8,7 +8,7 @@ import ApiError from "cgps-stdlib/errors/api-error.js";
 import sendEmailMessage from "cgps-stdlib/emails/send-email-message.js";
 import renderEmailMessage from "cgps-stdlib/emails/render-email-message.js";
 
-import databaseService from "../../../services/dataabse.js";
+import databaseService from "../../../services/database.js";
 
 const roleLabels = {
   "viewer": "view",

@@ -1,6 +1,6 @@
 import { ApiError } from "next/dist/server/api-utils";
 
-import databaseService, { toObjectId } from "../../../services/dataabse";
+import databaseService, { toObjectId } from "../../../services/database";
 import publicRuntimeConfig from "../../../utils/public-runtime-config";
 import serverRuntimeConfig from "../../../utils/server-runtime-config";
 
