@@ -59,7 +59,7 @@ module.exports.renderEmailMessage = async function renderEmailMessage(templateNa
   });
 
   const globalData = {
-    baseUrl: publicRuntimeConfig.baseUrl,
+    baseUrl: publicRuntimeConfig.baseUrl.endsWith("/") ? publicRuntimeConfig.baseUrl : `${publicRuntimeConfig.baseUrl}/`, // Ensure the base URL ends with a slash
   };
 
   const rendered = await email.renderAll(

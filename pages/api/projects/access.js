@@ -6,12 +6,13 @@ import databaseService from "../../../services/database";
 
 import accessCodeToAccessLevel from "../../../models/project/statics/access-code-to-access-level.js";
 import accessLevelToAccessCode from "../../../models/project/statics/access-level-to-access-code.js";
+import findProjectByIdentifier from "../../../services/project/find-by-identifier.js";
 
 export default async function (req, res) {
   const user = await requireUserMiddleware(req, res);
   const db = await databaseService();
 
-  const projectModel = await db.models.Project.findByIdentifier(
+  const projectModel = await findProjectByIdentifier(
     req.query?.project,
     "manager",
     user?.id,

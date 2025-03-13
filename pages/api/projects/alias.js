@@ -3,14 +3,12 @@ import requireUserMiddleware from "cgps-application-server/middleware/require-us
 import logger from "cgps-application-server/logger";
 
 import * as ProjectsService from "../../../services/projects";
-import databaseService from "../../../services/database";
+import findProjectByIdentifier from "../../../services/project/find-by-identifier";
 
 export default async function (req, res) {
-  const db = await databaseService();
-
   const user = await requireUserMiddleware(req, res);
 
-  const projectModel = await db.models.Project.findByIdentifier(
+  const projectModel = await findProjectByIdentifier(
     req.query?.project,
     "manager",
     user?.id,

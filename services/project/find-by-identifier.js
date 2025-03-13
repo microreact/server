@@ -1,6 +1,9 @@
-const projectSlugToId = require("cgps-stdlib/urls/parse-slug.js");
+import projectSlugToId from "cgps-stdlib/urls/parse-slug.js";
+import ApiError from "cgps-stdlib/errors/api-error.js";
 
-const ApiError = require("cgps-stdlib/errors/api-error.js").default;
+import createAccessQuery from "./create-access-query.js";
+import findUserTeamIds from "../users/find-user-team-ids.js";
+import databaseService from "../database.js";
 
 /**
  * Finds a project documents by project ID or project slug.
@@ -12,20 +15,24 @@ const ApiError = require("cgps-stdlib/errors/api-error.js").default;
  * @throws {ApiError} 401 Unauthorized: if the project is not public and the user is anonymous.
  * @throws {ApiError} 403 Forbidden: if the project is not public and the signed-in user does not have access.
 */
-async function findByIdentifier(
+async function findProjectByIdentifier(
   projectIdOrSlug,
   role,
   userId,
 ) {
+  const db = await databaseService();
+
   if (!projectIdOrSlug) {
     throw new ApiError(400, "Invalid Request");
   }
-
   const identifier = projectSlugToId(projectIdOrSlug);
 
-  const accessQuery = this.createAccessQuery(
+  const userTeamsIds = await findUserTeamIds(userId);
+
+  const accessQuery = createAccessQuery(
     role,
     userId,
+    userTeamsIds,
   );
 
   const idQuery = {
@@ -34,16 +41,17 @@ async function findByIdentifier(
       { alias: projectIdOrSlug },
     ],
   };
-
-  const model = await this.findOne({
-    "$and": [
-      idQuery,
-      accessQuery,
-    ],
-  });
+  const model = await db.models.Project.findOne(
+    {
+      "$and": [
+        idQuery,
+        accessQuery,
+      ],
+    }
+  );
 
   if (!model) {
-    const baseModel = await this.findOne(idQuery);
+    const baseModel = await db.models.Project.findOne(idQuery);
     if (baseModel) {
       if (userId) {
         throw new ApiError(403, "Forbidden");
@@ -59,5 +67,4 @@ async function findByIdentifier(
 
   return model;
 }
-
-module.exports = findByIdentifier;
+export default findProjectByIdentifier;

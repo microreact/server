@@ -1,7 +1,7 @@
 import requireUserMiddleware from "cgps-application-server/middleware/require-user";
 import logger from "cgps-application-server/logger";
 
-import databaseService from "../../../services/database";
+import findProjectByIdentifier from "../../../services/project/find-by-identifier";
 
 export const config = {
   api: {
@@ -12,10 +12,9 @@ export const config = {
 };
 
 export default async function (req, res) {
-  const db = await databaseService();
   const user = await requireUserMiddleware(req, res);
 
-  const projectModel = await db.models.Project.findByIdentifier(
+  const projectModel = await findProjectByIdentifier(
     req.query?.project,
     "editor",
     user?.id,

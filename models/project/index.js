@@ -8,8 +8,6 @@ schema.pre("save", require("./hooks/pre-save"));
 
 schema.statics.projectUrl = require("./statics/project-url");
 schema.statics.imageUrl = require("./statics/image-url");
-schema.statics.findByIdentifier = require("./statics/find-by-identifier");
-schema.statics.createAccessQuery = require("./statics/create-access-query");
 
 schema.methods.getProjectProps = require("./methods/get-project-props");
 schema.methods.getUserRole = require("./methods/get-user-role");

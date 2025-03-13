@@ -7,6 +7,7 @@ import getUserMiddleware from "cgps-application-server/middleware/get-user";
 
 import databaseService from "../../../services/database";
 import * as ProjectsService from "../../../services/projects";
+import findProjectByIdentifier from "../../../services/project/find-by-identifier";
 
 async function findProjectState(stateId, projectModel) {
   const db = await databaseService();
@@ -27,8 +28,6 @@ async function findProjectState(stateId, projectModel) {
 }
 
 async function handler(req, res) {
-  const db = await databaseService();
-
   const user = await getUserMiddleware(req, res);
 
   if (!req.query.project) {
@@ -37,7 +36,7 @@ async function handler(req, res) {
 
   const [ projectIdOrSlug, stateId ] = req.query.project.split("/");
 
-  const projectModel = await db.models.Project.findByIdentifier(
+  const projectModel = await findProjectByIdentifier(
     projectIdOrSlug,
     "viewer",
     user?.id,
