@@ -4,6 +4,7 @@ import Slugs from "cgps-application-server/utils/slugs";
 import createMicroreactDocument from "microreact.js";
 
 import databaseService, { isValidObjectId } from "./database";
+import findUserTeamIds from "./users/find-user-team-ids";
 
 /**
  * Finds a project documents by project ID or project slug.
@@ -27,7 +28,6 @@ async function findProjectDocuments(query, user) {
   const projectDocs = await db.models.Project.find(
     {
       ...query,
-      linkedProjectId: null,
     },
     {
       "_id": 0,
@@ -142,13 +142,28 @@ export async function findUserProjects(user) {
 export async function findUserSharedProjects(user) {
   await databaseService();
 
+  const userTeamsIds = await findUserTeamIds(user?.id);
+
   const query = {
     $or: [
       {
         "shares.kind": "user",
         "shares.user": user.id,
       },
+      {
+        "shares.kind": "team",
+        "shares.team": { $in: userTeamsIds },
+      },
     ],
+  };
+
+  return findProjectDocuments(query, user);
+}
+
+export async function findTeamProjects(team, user) {
+  const query = {
+    "shares.kind": "team",
+    "shares.team": { $in: team.id },
   };
 
   return findProjectDocuments(query, user);

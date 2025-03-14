@@ -12,10 +12,8 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import { SWRConfig } from "swr";
 
-import "@fontsource/space-grotesk/400.css";
-import "@fontsource/space-grotesk/700.css";
-import "@fontsource/open-sans/400.css";
-import "@fontsource/open-sans/700.css";
+import "@fontsource-variable/open-sans";
+import "@fontsource-variable/space-grotesk";
 import "@sweetalert2/theme-material-ui/material-ui.css";
 import "microreact-viewer/styles/index.css";
 

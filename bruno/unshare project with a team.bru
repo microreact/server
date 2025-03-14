@@ -1,0 +1,22 @@
+meta {
+  name: unshare project with a team
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{ENDPOINT_URL}}/api/shares/remove-team
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json; charset=utf-8
+}
+
+body:json {
+  {
+    "team": "53E42osSgysbaQGva5NciD",
+    "project": "nmEaSVNbEWzSD9uYyU4FTd"
+  }
+}

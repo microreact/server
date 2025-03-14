@@ -1,6 +1,6 @@
-const ObjectId = require("mongodb").ObjectId;
+import { ObjectId } from "mongodb";
 
-const accessLevelToAccessCode = require("./access-level-to-access-code.js");
+import accessLevelToAccessCode from "../../models/project/statics/access-level-to-access-code.js";
 
 function mapAccessLevel(role) {
   if (role === "viewer") {
@@ -37,6 +37,7 @@ function mapAccessLevel(role) {
 function createAccessQuery(
   role,
   userId,
+  userTeamsIds,
 ) {
   const {
     generalAccess,
@@ -60,9 +61,16 @@ function createAccessQuery(
       "shares.user": new ObjectId(userId),
       "shares.role": { $in: userAccess },
     });
+
+    if (userTeamsIds.length) {
+      query.$or.push({
+        "shares.team": { $in: userTeamsIds },
+        "shares.role": { $in: userAccess },
+      });
+    }
   }
 
   return query;
 }
 
-module.exports = createAccessQuery;
+export default createAccessQuery;

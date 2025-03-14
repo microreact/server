@@ -32,6 +32,8 @@ export default async function connectToDatabase() {
   require("../models/project");
   require("../models/user");
   require("../models/folder");
+  require("../models/team");
+  require("../models/invite");
 
   return db;
 }
