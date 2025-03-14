@@ -1,19 +1,10 @@
-import shortUUID from "short-uuid";
-
 import requireUserMiddleware from "cgps-application-server/middleware/require-user";
 
 import logger from "cgps-stdlib/logger/index.js";
 import catchApiErrors from "cgps-stdlib/errors/catch-api-errors.js";
 import ApiError from "cgps-stdlib/errors/api-error.js";
-import sendEmailMessage from "cgps-stdlib/emails/send-email-message.js";
-import renderEmailMessage from "cgps-stdlib/emails/render-email-message.js";
 
 import databaseService from "../../../services/database.js";
-
-const roleLabels = {
-  "viewer": "view",
-  "manager": "manage",
-};
 
 async function handler(req, res) {
   const db = await databaseService();

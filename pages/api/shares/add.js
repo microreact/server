@@ -54,7 +54,7 @@ async function handler(req, res) {
     const message = await renderEmailMessage(
       "invitation",
       {
-        role: roleLabels[role],
+        role: projectSharingRoles[role],
         tokenToSend: invitation.token,
         senderName: user.name,
         projectName: model.json.meta.name || "Untitled Project",

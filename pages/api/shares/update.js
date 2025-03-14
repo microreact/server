@@ -3,9 +3,11 @@ import requireUserMiddleware from "cgps-application-server/middleware/require-us
 import catchApiErrors from "cgps-stdlib/errors/catch-api-errors.js";
 import ApiError from "cgps-stdlib/errors/api-error.js";
 
+import databaseService from "../../../services/database.js";
 import findProjectByIdentifier from "../../../services/project/find-by-identifier.js";
 
 async function handler(req, res) {
+  const db = await databaseService();
 
   const user = await requireUserMiddleware(req, res);
 
