@@ -3,7 +3,7 @@ import Slugs from "cgps-application-server/utils/slugs";
 
 import createMicroreactDocument from "microreact.js";
 
-import databaseService, { isValidObjectId } from "./dataabse";
+import databaseService, { isValidObjectId } from "./database";
 
 /**
  * Finds a project documents by project ID or project slug.

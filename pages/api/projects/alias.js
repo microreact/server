@@ -3,7 +3,7 @@ import requireUserMiddleware from "cgps-application-server/middleware/require-us
 import logger from "cgps-application-server/logger";
 
 import * as ProjectsService from "../../../services/projects";
-import databaseService from "../../../services/dataabse";
+import databaseService from "../../../services/database";
 
 export default async function (req, res) {
   const db = await databaseService();

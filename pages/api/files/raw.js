@@ -4,7 +4,7 @@ import getUserMiddleware from "cgps-application-server/middleware/get-user";
 
 import FileStorage from "../../../services/file-storage";
 import * as ProjectsService from "../../../services/projects";
-import databaseService from "../../../services/dataabse";
+import databaseService from "../../../services/database";
 
 export const config = {
   api: {

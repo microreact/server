@@ -1,6 +1,6 @@
 import getUserMiddlewarefrom from "cgps-application-server/middleware/get-user";
 
-import dataabse from "../../../services/dataabse";
+import database from "../../../services/database";
 
 function remove(array, element) {
   const index = array.indexOf(element);
@@ -11,7 +11,7 @@ function remove(array, element) {
 }
 
 export default async function (req, res) {
-  const db = await dataabse();
+  const db = await database();
 
   const user = await getUserMiddlewarefrom(req, res);
 

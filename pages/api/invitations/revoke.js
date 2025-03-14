@@ -2,7 +2,7 @@ import { ApiError } from "next/dist/server/api-utils";
 import requireUserMiddleware from "cgps-application-server/middleware/require-user";
 
 import * as ProjectsService from "../../../services/projects";
-import databaseService from "../../../services/dataabse";
+import databaseService from "../../../services/database";
 
 export default async function (req, res) {
   // Only logged in users can send invitations
