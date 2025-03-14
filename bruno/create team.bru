@@ -1,0 +1,21 @@
+meta {
+  name: create team
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{ENDPOINT_URL}}/api/teams/create
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json; charset=utf-8
+}
+
+body:json {
+  {
+    "name": "Team CGPS"
+  }
+}

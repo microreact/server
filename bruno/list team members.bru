@@ -1,0 +1,21 @@
+meta {
+  name: list team members
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{ENDPOINT_URL}}/api/teams/list-members
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json; charset=utf-8
+}
+
+body:json {
+  {
+    "team": "53E42osSgysbaQGva5NciD"
+  }
+}

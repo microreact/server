@@ -1,0 +1,24 @@
+meta {
+  name: add user to team
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{ENDPOINT_URL}}/api/teams/add-member
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json; charset=utf-8
+}
+
+body:json {
+  {
+    "team": "53E42osSgysbaQGva5NciD",
+    "emails": [
+      "cgpsdev@gmail.com"
+    ]
+  }
+}
