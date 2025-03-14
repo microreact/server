@@ -8,7 +8,7 @@ module.exports = mongoose.Schema({
     type: Date,
     default: () => new Date(),
   },
-  // project: { type: ObjectId, ref: "Project" },
+  project: { type: ObjectId, ref: "Project" },
   team: { type: String },
   owner: { type: ObjectId, ref: "User" },
   email: { type: String },
