@@ -7,7 +7,6 @@ export default async function (req, res) {
 
   const user = await getUserMiddlewarefrom(req, res);
 
-  // Only logged in users can accept a share request
   if (!user) {
     return res.redirect(`/api/auth/signin?callbackUrl=${req.url}`);
   }
