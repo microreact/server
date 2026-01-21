@@ -14,7 +14,7 @@ export default async function (req, res) {
     user?.id,
   );
 
-  const isBinned = Boolean(req.body.binned);
+  const isBinned = Boolean(req.body.binned ?? true);
 
   if (typeof isBinned === "boolean") {
     projectModel.binned = isBinned;
