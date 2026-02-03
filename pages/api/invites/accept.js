@@ -1,11 +1,11 @@
-import getUserMiddlewarefrom from "cgps-application-server/middleware/get-user";
+import getUserMiddleware from "cgps-application-server/middleware/get-user";
 
 import database from "../../../services/database.js";
 
 export default async function (req, res) {
   const db = await database();
 
-  const user = await getUserMiddlewarefrom(req, res);
+  const user = await getUserMiddleware(req, res);
 
   if (!user) {
     return res.redirect(`/api/auth/signin?callbackUrl=${req.url}`);
