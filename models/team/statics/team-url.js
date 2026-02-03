@@ -2,7 +2,7 @@ const Slugs = require("cgps-application-server/utils/slugs");
 
 const UrlService = require("../../../services/url-service");
 
-module.exports = function projectUrl(id, title) {
+module.exports = function teamUrl(id, title) {
   const path = (
     (title && id.length === 22)
       ?
