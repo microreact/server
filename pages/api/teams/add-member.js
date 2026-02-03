@@ -1,5 +1,3 @@
-import shortUUID from "short-uuid";
-
 import requireUserMiddleware from "cgps-application-server/middleware/require-user";
 
 import logger from "cgps-stdlib/logger/index.js";

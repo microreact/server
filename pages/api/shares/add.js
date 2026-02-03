@@ -11,6 +11,12 @@ import renderEmailMessage from "cgps-stdlib/emails/render-email-message.js";
 import projectSharingRoles from "../../../services/project/share-roles.js";
 import findProjectByIdentifier from "../../../services/project/find-by-identifier.js";
 
+const roleLabels = {
+  "viewer": "view",
+  "editor": "edit",
+  "manager": "manage",
+};
+
 async function handler(req, res) {
 
   // Only logged in users can send share requests

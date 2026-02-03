@@ -4,6 +4,7 @@ import catchApiErrors from "cgps-stdlib/errors/catch-api-errors.js";
 import ApiError from "cgps-stdlib/errors/api-error.js";
 
 import findProjectByIdentifier from "../../../services/project/find-by-identifier.js";
+import database from "../../../services/database";
 
 async function handler(req, res) {
 
@@ -32,7 +33,7 @@ async function handler(req, res) {
   );
 
   if (!share) {
-    const invitedUser = await db.models.User.findOne(
+    const invitedUser = await database.models.User.findOne(
       { email },
       { _id: 1 },
       { lean: true },
