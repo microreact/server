@@ -5,3 +5,5 @@ export const {
   themeStyle,
   muiTheme,
 } = createTheme(mr);
+
+export const theme = mr;

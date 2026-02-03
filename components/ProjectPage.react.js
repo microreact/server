@@ -10,6 +10,7 @@ import ApiError from "./ApiError.react";
 
 import * as ApiClient from "../utils/api-client";
 import publicRuntimeConfig from "../utils/public-runtime-config";
+import { theme } from "../utils/theme";
 
 // function pushQueryString(qs) {
 //   if (history.pushState) {
@@ -38,8 +39,9 @@ class ProjectPage extends React.Component {
     ApiClient.getProjectJson(this.props.projectSlug)
       .then((projectJson) => {
         projectJson.config = {
-          mapboxApiAccessToken: publicRuntimeConfig.mapboxApiAccessToken,
-          actions: publicRuntimeConfig.downloadActions,
+          "mapboxApiAccessToken": publicRuntimeConfig.mapboxApiAccessToken,
+          "actions": publicRuntimeConfig.downloadActions,
+          "theme": theme,
         };
         if (this.props.query) {
           projectJson.query = this.props.query;
