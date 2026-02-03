@@ -4,7 +4,7 @@ import getUserMiddleware from "cgps-application-server/middleware/get-user";
 
 import FileStorage from "../../../services/file-storage";
 import * as ProjectsService from "../../../services/projects";
-import databaseService from "../../../services/database";
+import findProjectByIdentifier from "../../../services/project/find-by-identifier";
 
 export const config = {
   api: {
@@ -13,8 +13,6 @@ export const config = {
 };
 
 export default async function (req, res) {
-  const db = await databaseService();
-
   const fileHash = req.query.id || req.query.hash || (Object.keys(req.query)?.[0]);
   if (!fileHash) {
     throw new ApiError(400);
@@ -27,7 +25,7 @@ export default async function (req, res) {
 
   const user = await getUserMiddleware(req, res);
   const parts = refererUrl.pathname.split("/");
-  const projectModel = await db.models.Project.findByIdentifier(
+  const projectModel = await findProjectByIdentifier(
     parts[2],
     "viewer",
     user?.id,

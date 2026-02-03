@@ -8,21 +8,15 @@ import ApiError from "cgps-stdlib/errors/api-error.js";
 import sendEmailMessage from "cgps-stdlib/emails/send-email-message.js";
 import renderEmailMessage from "cgps-stdlib/emails/render-email-message.js";
 
-import databaseService from "../../../services/database.js";
-
-const roleLabels = {
-  "viewer": "view",
-  "editor": "edit",
-  "manager": "manage",
-};
+import projectSharingRoles from "../../../services/project/share-roles.js";
+import findProjectByIdentifier from "../../../services/project/find-by-identifier.js";
 
 async function handler(req, res) {
-  const db = await databaseService();
 
   // Only logged in users can send share requests
   const user = await requireUserMiddleware(req, res);
 
-  const model = await db.models.Project.findByIdentifier(
+  const model = await findProjectByIdentifier(
     req.query?.id,
     "manager",
     user?.id,
@@ -30,7 +24,7 @@ async function handler(req, res) {
 
   const { emails, role } = req.body;
 
-  if (!(role in roleLabels)) {
+  if (!(role in projectSharingRoles)) {
     throw new ApiError(400, "invalid role");
   }
 

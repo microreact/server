@@ -64,6 +64,21 @@ projectSchema
 projectSchema
   .path("shares")
   .discriminator(
+    "team",
+    new mongoose.Schema(
+      {
+        createdAt: { type: Date },
+        team: { type: String },
+        token: { type: String },
+        role: { type: String, default: "viewer" },
+      },
+      { _id: false },
+    ),
+  );
+
+projectSchema
+  .path("shares")
+  .discriminator(
     "invitation",
     new mongoose.Schema(
       {

@@ -60,3 +60,7 @@ export function userSharedProjectsHook() {
 export function showcaseProjectsHook() {
   return apiEndpointHook("/api/showcase/projects");
 }
+
+export function teamProjectsHook(teamId) {
+  return apiEndpointHook(`/api/teams/list-projects?team=${teamId}`);
+}
