@@ -66,6 +66,9 @@ async function handler(req, res) {
 
   jsonDocument._ = projectModel.getProjectProps(user);
 
+  projectModel.updateStats();
+  await projectModel.save();
+
   return res.json(jsonDocument);
 }
 
