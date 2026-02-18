@@ -25,8 +25,10 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.info("[Stats Generation] Starting stats generation");
     const db = await databaseService();
 
+    console.info("[Stats Generation] Fetching total counts");
     // Get total projects count
     const totalProjects = await db.models.Project.countDocuments({
       binned: { $in: [null, false] },
@@ -50,6 +52,8 @@ export default async function handler(req, res) {
       },
     ]);
     const totalEntries = totalEntriesResult[0]?.total || 0;
+
+    console.info("[Stats Generation] Total projects: %d, Total users: %d, Total entries: %d", totalProjects, totalUsers, totalEntries);
 
     // Get projects grouped by date (last 3 months)
     const threeMonthsAgo = new Date();
@@ -85,6 +89,7 @@ export default async function handler(req, res) {
     const today = new Date();
     const dateString = today.toISOString().split("T")[0];
 
+    console.info("[Stats Generation] Calculating 30-day comparison metrics");
     // Calculate projects for last 30 days and previous 30 days
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -147,6 +152,8 @@ export default async function handler(req, res) {
     const usersDiff = calculateDiff(usersLast30Days, usersPrev30Days);
     const entriesDiff = calculateDiff(entriesLast30Days, entriesPrev30Days);
 
+    console.info("[Stats Generation] Calculated diffs - Projects: %s, Users: %s, Entries: %s", projectsDiff, usersDiff, entriesDiff);
+
     // Build the stats JSON
     const statsJson = {
       name: "Microreact",
@@ -187,6 +194,7 @@ export default async function handler(req, res) {
 
     // Upload to S3
     if (serverRuntimeConfig.storageKey && serverRuntimeConfig.storageSecret) {
+      console.info("[Stats Generation] Uploading to S3 bucket: %s, key: %s", s3Bucket, s3Key);
       // Configure S3 client
       const s3Client = new S3Client({
         region: serverRuntimeConfig.storageRegion || "eu-west-2",
@@ -210,6 +218,7 @@ export default async function handler(req, res) {
         })
       );
 
+      console.info("[Stats Generation] Successfully uploaded stats to S3");
       return res.status(200).json({ success: true });
     }
     else {
