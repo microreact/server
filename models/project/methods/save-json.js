@@ -1,6 +1,8 @@
+const FileStorage = require("../../../services/file-storage");
+
 const { projectSchemaVersion } = require("../schema");
 
-const FileStorage = require("../../../services/file-storage");
+const countEntries = require("./count-entries");
 
 function base64ToBlob(base64) {
   return fetch(base64).then((res) => res.text());
