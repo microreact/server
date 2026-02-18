@@ -53,7 +53,7 @@ export default async function handler(req, res) {
     // Format project data for charts
     const chartData = projectsByDate.map((item) => ({
       date: item._id,
-      projects: item.count,
+      projects: Math.min(100, item.count),
     }));
 
     // Generate today's date
