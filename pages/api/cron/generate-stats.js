@@ -3,6 +3,15 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import databaseService from "../../../services/database";
 import serverRuntimeConfig from "../../../utils/server-runtime-config";
 
+function calculateDiff(current, previous) {
+  if (!Number.isFinite(previous) || previous <= 0) {
+    return "+0%";
+  }
+
+  const percent = Math.round(((current - previous) / previous) * 100);
+  return `${percent >= 0 ? "+" : ""}${percent}%`;
+}
+
 /**
  * Generate stats JSON and save to S3
  * Called via cron job
@@ -25,6 +34,22 @@ export default async function handler(req, res) {
 
     // Get total users count
     const totalUsers = await db.models.User.countDocuments();
+
+    // Get total entries count
+    const totalEntriesResult = await db.models.Project.aggregate([
+      {
+        $match: {
+          binned: { $in: [null, false] },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$numEntries" },
+        },
+      },
+    ]);
+    const totalEntries = totalEntriesResult[0]?.total || 0;
 
     // Get projects grouped by date (last 3 months)
     const threeMonthsAgo = new Date();
@@ -60,10 +85,67 @@ export default async function handler(req, res) {
     const today = new Date();
     const dateString = today.toISOString().split("T")[0];
 
-    // Calculate percentage differences (placeholder values)
-    // In a real scenario, you'd compare with previous period
-    const projectsDiff = "+1%";
-    const usersDiff = "+1%";
+    // Calculate projects for last 30 days and previous 30 days
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const sixtyDaysAgo = new Date();
+    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
+    const projectsLast30Days = await db.models.Project.countDocuments({
+      createdAt: { $gte: thirtyDaysAgo },
+      binned: { $in: [null, false] },
+    });
+
+    const projectsPrev30Days = await db.models.Project.countDocuments({
+      createdAt: { $gte: sixtyDaysAgo, $lt: thirtyDaysAgo },
+      binned: { $in: [null, false] },
+    });
+
+    const usersLast30Days = await db.models.User.countDocuments({
+      createdAt: { $gte: thirtyDaysAgo },
+    });
+
+    const usersPrev30Days = await db.models.User.countDocuments({
+      createdAt: { $gte: sixtyDaysAgo, $lt: thirtyDaysAgo },
+    });
+
+    const entriesLast30DaysResult = await db.models.Project.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: thirtyDaysAgo },
+          binned: { $in: [null, false] },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$numEntries" },
+        },
+      },
+    ]);
+    const entriesLast30Days = entriesLast30DaysResult[0]?.total || 0;
+
+    const entriesPrev30DaysResult = await db.models.Project.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: sixtyDaysAgo, $lt: thirtyDaysAgo },
+          binned: { $in: [null, false] },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$numEntries" },
+        },
+      },
+    ]);
+    const entriesPrev30Days = entriesPrev30DaysResult[0]?.total || 0;
+
+    // Calculate percentage differences
+    const projectsDiff = calculateDiff(projectsLast30Days, projectsPrev30Days);
+    const usersDiff = calculateDiff(usersLast30Days, usersPrev30Days);
+    const entriesDiff = calculateDiff(entriesLast30Days, entriesPrev30Days);
 
     // Build the stats JSON
     const statsJson = {
@@ -81,6 +163,12 @@ export default async function handler(req, res) {
           value: totalUsers,
           label: "Total number of users accounts",
           diff: usersDiff,
+        },
+        {
+          title: "Total entries",
+          value: totalEntries,
+          label: "Total number of entries in projects",
+          diff: entriesDiff,
         },
       ],
       charts: [
