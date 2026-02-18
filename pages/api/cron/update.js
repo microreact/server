@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   const db = await databaseService();
 
   let index = 0;
-console.log({db})
+
   const projectsCount = await db.collection("projects").count({ numEntries: { $exists: false } });
   const projectsCursor = db.collection("projects").find({ numEntries: { $exists: false } });
   for await (const doc of projectsCursor) {
