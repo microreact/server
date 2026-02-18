@@ -45,6 +45,7 @@ const projectSchema = new mongoose.Schema({
   updatedAt: { type: Date },
   version: { type: Number, default: projectSchemaVersion },
   viewsCount: { type: Number, default: 0 },
+  numEntries: { type: Number, default: 0 },
 });
 
 projectSchema

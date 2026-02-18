@@ -29,6 +29,8 @@ module.exports = async function saveJson(projectJson, parentProjectId) {
 
   this.json = projectJson;
 
+  this.numEntries = await countEntries(projectJson);
+
   this.version = projectSchemaVersion;
 
   return this.save();
