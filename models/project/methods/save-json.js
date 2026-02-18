@@ -24,7 +24,7 @@ async function saveInlineFilesInStorage(projectJson) {
   }
 }
 
-module.exports = async function saveJson(projectJson, parentProjectId) {
+module.exports = async function saveJson(projectJson) {
   await saveInlineFilesInStorage(projectJson);
 
   this.json = projectJson;
