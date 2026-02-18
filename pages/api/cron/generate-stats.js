@@ -1,5 +1,4 @@
-import { Readable } from "stream";
-import objectStorage from "cgps-stdlib/object-storage";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 import databaseService from "../../../services/database";
 import serverRuntimeConfig from "../../../utils/server-runtime-config";
@@ -95,55 +94,37 @@ export default async function handler(req, res) {
     };
 
     // Determine S3 bucket and key
-    const s3Bucket = serverRuntimeConfig.statsBucket || "microreact-stats";
-    const s3Key = `stats/stats-${dateString}.json`;
+    const s3Bucket = serverRuntimeConfig.statsBucket || "cgps-dashboard";
+    const s3Key = "microreact.json";
 
     // Upload to S3
     if (serverRuntimeConfig.storageKey && serverRuntimeConfig.storageSecret) {
-      // Prepare JSON content as buffer
-      const jsonContent = JSON.stringify(statsJson, null, 2);
-      const jsonBuffer = Buffer.from(jsonContent);
-
-      // Helper function to create readable stream from buffer
-      const createReadableStream = (buffer) => {
-        const stream = new Readable();
-        stream.push(buffer);
-        stream.push(null);
-        return stream;
-      };
-
-      // Upload to S3 with dated filename
-      await objectStorage.store(
-        s3Bucket,
-        s3Key,
-        createReadableStream(jsonBuffer),
-        false,
-        {
-          ContentType: "application/json",
-        }
-      );
-
-      // Also save as latest.json for easy access
-      await objectStorage.store(
-        s3Bucket,
-        "stats/latest.json",
-        createReadableStream(jsonBuffer),
-        false,
-        {
-          ContentType: "application/json",
-        }
-      );
-
-      return res.status(200).json({
-        success: true,
-        message: "Stats generated and uploaded to S3",
-        data: {
-          bucket: s3Bucket,
-          keys: [s3Key, "stats/latest.json"],
-          stats: statsJson,
+      // Configure S3 client
+      const s3Client = new S3Client({
+        region: serverRuntimeConfig.storageRegion || "eu-west-2",
+        credentials: {
+          accessKeyId: serverRuntimeConfig.storageKey,
+          secretAccessKey: serverRuntimeConfig.storageSecret,
         },
       });
-    } else {
+
+      // Prepare JSON content as buffer
+      const jsonContent = JSON.stringify(statsJson);
+      const jsonBuffer = Buffer.from(jsonContent);
+
+      // Upload to S3 with dated filename
+      await s3Client.send(
+        new PutObjectCommand({
+          Bucket: s3Bucket,
+          Key: s3Key,
+          Body: jsonBuffer,
+          ContentType: "application/json",
+        })
+      );
+
+      return res.status(200).json({ success: true });
+    }
+    else {
       return res.status(500).json({
         error: "S3 credentials not configured",
       });
