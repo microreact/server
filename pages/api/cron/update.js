@@ -45,6 +45,7 @@ export default async function handler(req, res) {
       CONCURRENCY,
       async (doc, index) => {
         console.info("Updating project %s / %s. %s \r", totalProcessed + index + 1, projectsCount, doc.id);
+        await db.collection("projects").updateOne({ _id: doc._id }, { $set: { numEntries: 0 } });
         try {
           const jsonDocument = await ProjectsService.toViewerJson(doc);
           const numEntries = await countEntries(jsonDocument);
@@ -52,7 +53,6 @@ export default async function handler(req, res) {
         }
         catch (err) {
           console.error("Error updating project %s: %s", doc.id, err);
-          await db.collection("projects").updateOne({ _id: doc._id }, { $set: { numEntries: 0 } });
         }
       },
     );
