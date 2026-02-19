@@ -185,20 +185,20 @@ export default async function handler(req, res) {
     const entriesPrev30Days = entriesPrev30DaysResult[0]?.total || 0;
 
     // Get total views count
-    const totalViewsResult = await db.models.Project.aggregate([
-      {
-        $match: {
-          binned: { $in: [null, false] },
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          total: { $sum: "$viewsCount" },
-        },
-      },
-    ]);
-    const totalViews = totalViewsResult[0]?.total || 0;
+    // const totalViewsResult = await db.models.Project.aggregate([
+    //   {
+    //     $match: {
+    //       binned: { $in: [null, false] },
+    //     },
+    //   },
+    //   {
+    //     $group: {
+    //       _id: null,
+    //       total: { $sum: "$viewsCount" },
+    //     },
+    //   },
+    // ]);
+    // const totalViews = totalViewsResult[0]?.total || 0;
 
     // Get views for last 30 days
     const viewsLast30DaysResult = await db.models.Project.aggregate([
@@ -262,15 +262,15 @@ export default async function handler(req, res) {
         {
           title: "Total entries",
           value: totalEntries,
-          label: "Total number of entries in projects",
+          label: "Total number of entries in all projects",
           diff: entriesDiff,
         },
-        {
-          title: "Views",
-          value: totalViews,
-          label: "Total number of projects views",
-          diff: viewsDiff,
-        },
+        // {
+        //   title: "Views",
+        //   value: totalViews,
+        //   label: "Total number of projects views",
+        //   diff: viewsDiff,
+        // },
       ],
       charts: [
         {
