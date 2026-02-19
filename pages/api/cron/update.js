@@ -1,5 +1,3 @@
-import promiseMapLimit from "promise-map-limit";
-
 import countEntries from "../../../models/project/methods/count-entries";
 import databaseService from "../../../services/database";
 import * as ProjectsService from "../../../services/projects";
@@ -20,7 +18,6 @@ export default async function handler(req, res) {
   const db = await databaseService();
 
   const BATCH_SIZE = 1000;
-  const CONCURRENCY = 4;
 
   let totalProcessed = 0;
   const projectsCount = await db.collection("projects").countDocuments({ numEntries: { $exists: false } });
@@ -39,23 +36,18 @@ export default async function handler(req, res) {
       break;
     }
 
-    // Process batch with concurrency of 4
-    await promiseMapLimit(
-      batch,
-      CONCURRENCY,
-      async (doc, index) => {
-        console.info("Updating project %s / %s. %s \r", totalProcessed + index + 1, projectsCount, doc.id);
-        await db.collection("projects").updateOne({ _id: doc._id }, { $set: { numEntries: 0 } });
-        try {
-          const jsonDocument = await ProjectsService.toViewerJson(doc);
-          const numEntries = await countEntries(jsonDocument);
-          await db.collection("projects").updateOne({ _id: doc._id }, { $set: { numEntries } });
-        }
-        catch (err) {
-          console.error("Error updating project %s: %s", doc.id, err);
-        }
-      },
-    );
+    for (const [index, doc] of batch.entries()) {
+      console.info("Updating project %s / %s. %s \r", totalProcessed + index + 1, projectsCount, doc.id);
+      await db.collection("projects").updateOne({ _id: doc._id }, { $set: { numEntries: 0 } });
+      try {
+        const jsonDocument = await ProjectsService.toViewerJson(doc);
+        const numEntries = await countEntries(jsonDocument);
+        await db.collection("projects").updateOne({ _id: doc._id }, { $set: { numEntries } });
+      }
+      catch (err) {
+        console.error("Error updating project %s: %s", doc.id, err);
+      }
+    }
 
     totalProcessed += batch.length;
     console.info("Processed %s / %s projects", totalProcessed, projectsCount);
