@@ -102,16 +102,32 @@ export default async function handler(req, res) {
 
     // Merge projects and views data by date
     const dateMap = new Map();
-    projectsByDate.forEach((item) => {
-      dateMap.set(item._id, { date: item._id, projects: Math.min(100, item.count), views: 0 });
-    });
-    viewsByDate.forEach((item) => {
+    for (const item of projectsByDate) {
+      dateMap.set(
+        item._id,
+        {
+          date: item._id,
+          projects: Math.min(100, item.count),
+          views: 0,
+        },
+      );
+    }
+    for (const item of viewsByDate) {
       if (dateMap.has(item._id)) {
         dateMap.get(item._id).views = item.count;
-      } else {
-        dateMap.set(item._id, { date: item._id, projects: 0, views: item.count });
       }
-    });
+      else {
+        dateMap.set(
+          item._id,
+          {
+            date: item._id,
+            projects: 0,
+            views:
+            item.count,
+          },
+        );
+      }
+    }
 
     // Format chart data sorted by date
     const chartData = Array.from(dateMap.values()).sort((a, b) => a.date.localeCompare(b.date));
