@@ -79,11 +79,42 @@ export default async function handler(req, res) {
       },
     ]);
 
-    // Format project data for charts
-    const chartData = projectsByDate.map((item) => ({
-      date: item._id,
-      projects: Math.min(100, item.count),
-    }));
+    // Get views grouped by date (last 3 months)
+    const viewsByDate = await db.models.Project.aggregate([
+      {
+        $match: {
+          accessedAt: { $gte: threeMonthsAgo },
+          binned: { $in: [null, false] },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$accessedAt" },
+          },
+          count: { $sum: "$viewsCount" },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    // Merge projects and views data by date
+    const dateMap = new Map();
+    projectsByDate.forEach((item) => {
+      dateMap.set(item._id, { date: item._id, projects: Math.min(100, item.count), views: 0 });
+    });
+    viewsByDate.forEach((item) => {
+      if (dateMap.has(item._id)) {
+        dateMap.get(item._id).views = item.count;
+      } else {
+        dateMap.set(item._id, { date: item._id, projects: 0, views: item.count });
+      }
+    });
+
+    // Format chart data sorted by date
+    const chartData = Array.from(dateMap.values()).sort((a, b) => a.date.localeCompare(b.date));
 
     console.info("[Stats Generation] Calculating 30-day comparison metrics");
     // Calculate projects for last 30 days and previous 30 days
@@ -234,7 +265,7 @@ export default async function handler(req, res) {
       charts: [
         {
           title: "Total projects",
-          series: ["projects"],
+          series: ["projects", "views"],
           description: "Total for the last 3 months",
           data: chartData,
         },
