@@ -143,12 +143,63 @@ export default async function handler(req, res) {
     ]);
     const entriesPrev30Days = entriesPrev30DaysResult[0]?.total || 0;
 
+    // Get total views count
+    const totalViewsResult = await db.models.Project.aggregate([
+      {
+        $match: {
+          binned: { $in: [null, false] },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$viewsCount" },
+        },
+      },
+    ]);
+    const totalViews = totalViewsResult[0]?.total || 0;
+
+    // Get views for last 30 days
+    const viewsLast30DaysResult = await db.models.Project.aggregate([
+      {
+        $match: {
+          accessedAt: { $gte: thirtyDaysAgo },
+          binned: { $in: [null, false] },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$viewsCount" },
+        },
+      },
+    ]);
+    const viewsLast30Days = viewsLast30DaysResult[0]?.total || 0;
+
+    // Get views for previous 30 days
+    const viewsPrev30DaysResult = await db.models.Project.aggregate([
+      {
+        $match: {
+          accessedAt: { $gte: sixtyDaysAgo, $lt: thirtyDaysAgo },
+          binned: { $in: [null, false] },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$viewsCount" },
+        },
+      },
+    ]);
+    const viewsPrev30Days = viewsPrev30DaysResult[0]?.total || 0;
+
     // Calculate percentage differences
     const projectsDiff = calculateDiff(projectsLast30Days, projectsPrev30Days);
     const usersDiff = calculateDiff(usersLast30Days, usersPrev30Days);
     const entriesDiff = calculateDiff(entriesLast30Days, entriesPrev30Days);
+    const viewsDiff = calculateDiff(viewsLast30Days, viewsPrev30Days);
 
-    console.info("[Stats Generation] Calculated diffs - Projects: %s, Users: %s, Entries: %s", projectsDiff, usersDiff, entriesDiff);
+    console.info("[Stats Generation] Calculated diffs - Projects: %s, Users: %s, Entries: %s, Views: %s", projectsDiff, usersDiff, entriesDiff, viewsDiff);
 
     // Build the stats JSON
     const statsJson = {
@@ -174,7 +225,7 @@ export default async function handler(req, res) {
           diff: entriesDiff,
         },
         {
-          title: "Project views",
+          title: "Views",
           value: totalViews,
           label: "Total number of projects views",
           diff: viewsDiff,
