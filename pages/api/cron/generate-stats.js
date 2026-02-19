@@ -85,10 +85,6 @@ export default async function handler(req, res) {
       projects: Math.min(100, item.count),
     }));
 
-    // Generate today's date
-    const today = new Date();
-    const dateString = today.toISOString().split("T")[0];
-
     console.info("[Stats Generation] Calculating 30-day comparison metrics");
     // Calculate projects for last 30 days and previous 30 days
     const thirtyDaysAgo = new Date();
@@ -157,18 +153,18 @@ export default async function handler(req, res) {
     // Build the stats JSON
     const statsJson = {
       name: "Microreact",
-      date: dateString,
+      date: new Date().toISOString().split("T")[0],
       stats: [
         {
-          title: "Total projects",
+          title: "Projects",
           value: totalProjects,
           label: "Total number of uploaded projects",
           diff: projectsDiff,
         },
         {
-          title: "Total users",
+          title: "User accounts",
           value: totalUsers,
-          label: "Total number of users accounts",
+          label: "Total number of registered accounts",
           diff: usersDiff,
         },
         {
@@ -176,6 +172,12 @@ export default async function handler(req, res) {
           value: totalEntries,
           label: "Total number of entries in projects",
           diff: entriesDiff,
+        },
+        {
+          title: "Project views",
+          value: totalViews,
+          label: "Total number of projects views",
+          diff: viewsDiff,
         },
       ],
       charts: [
