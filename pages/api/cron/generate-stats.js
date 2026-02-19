@@ -74,9 +74,6 @@ export default async function handler(req, res) {
           count: { $sum: 1 },
         },
       },
-      {
-        $sort: { _id: 1 },
-      },
     ]);
 
     // Get views grouped by date (last 3 months)
@@ -94,9 +91,6 @@ export default async function handler(req, res) {
           },
           count: { $sum: "$viewsCount" },
         },
-      },
-      {
-        $sort: { _id: 1 },
       },
     ]);
 
