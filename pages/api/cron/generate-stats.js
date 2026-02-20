@@ -240,7 +240,7 @@ export default async function handler(req, res) {
     const entriesDiff = calculateDiff(entriesLast30Days, entriesPrev30Days);
     // const viewsDiff = calculateDiff(viewsLast30Days, viewsPrev30Days);
 
-    console.info("[Stats Generation] Calculated diffs - Projects: %s, Users: %s, Entries: %s, Views: %s", projectsDiff, usersDiff, entriesDiff, viewsDiff);
+    console.info("[Stats Generation] Calculated diffs - Projects: %s, Users: %s, Entries: %s, Views: %s", projectsDiff, usersDiff, entriesDiff);
 
     // Build the stats JSON
     const statsJson = {
