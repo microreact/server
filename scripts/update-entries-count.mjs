@@ -7,8 +7,6 @@ import promiseMapLimit from "promise-map-limit";
 import xlsx from "xlsx";
 import { finished } from "stream/promises";
 
-import config from "./config.json" assert { type: "json" };
-
 function hashToPath(hash) {
   return path.resolve(
     ".",
@@ -134,7 +132,11 @@ async function countEntriesInFile(file) {
 
   if (file.url) {
     if (file.url.startsWith("ftp://")) {
-      return 0;
+      return -10;
+    }
+
+    if (file.url.startsWith("https://dev.microreact.org/") || file.url.startsWith("https://beta.microreact.org/")) {
+      return -20;
     }
 
     else if (file.url.includes("/api/files/raw?")) {
@@ -188,13 +190,15 @@ async function countEntries(projectJson) {
 }
 
 async function main() {
+  // eslint-disable-next-line import/no-unresolved
+  const config = await import("./config.json", { assert: { type: "json" } });
   const client = new MongoClient(config.mongodb.url);
 
   await client.connect();
 
   const db = client.db();
 
-  const BATCH_SIZE = 1000;
+  const BATCH_SIZE = 100;
   const CONCURRENCY = 8;
 
   let totalProcessed = 0;
@@ -202,9 +206,8 @@ async function main() {
 
   console.info("Total projects to update: %s", projectsCount);
 
-  // eslint-disable-next-line no-constant-condition
+  // eslint-disable-next-line no-constant-condition, no-unreachable-loop
   while (true) {
-    // Load batch of 100 documents
     const batch = await db.collection("projects")
       .find({ numEntries: { $exists: false } })
       .limit(BATCH_SIZE)
@@ -215,36 +218,38 @@ async function main() {
     }
 
     const process = async (doc) => {
-      console.info("Updating project %s / %s. %s \r", totalProcessed, projectsCount, doc.id);
+      console.info("Updating project %s / %s. %s version %s \r", totalProcessed, projectsCount, doc.id, doc.version);
       try {
-        if (doc.version > 1) {
+        if (doc.version > 1 || doc.json.schema) {
+          console.debug("Counting entries for project %s using new method", doc.id);
           const numEntries = await countEntries(doc.json);
           await db.collection("projects").updateOne({ _id: doc._id }, { $set: { numEntries } });
         }
+        else if (doc.json.dataUrl) {
+          const file = {
+            url: doc.json.dataUrl,
+            format: "text/csv",
+          };
+          const numEntries = await countEntriesInFile(file);
+          await db.collection("projects").updateOne({ _id: doc._id }, { $set: { numEntries } });
+        }
+        else if (doc.json.dataFile) {
+          const file = {
+            blob: doc.json.dataFile,
+            format: "text/csv",
+          };
+          const numEntries = await countEntriesInFile(file);
+          await db.collection("projects").updateOne({ _id: doc._id }, { $set: { numEntries } });
+        }
         else {
-          if (doc.json.dataUrl) {
-            const file = {
-              url: doc.json.dataUrl,
-              format: "text/csv",
-            };
-            const numEntries = await countEntriesInFile(file);
-            await db.collection("projects").updateOne({ _id: doc._id }, { $set: { numEntries } });
-          }
-          if (doc.json.dataFile) {
-            const file = {
-              blob: doc.json.dataFile,
-              format: "text/csv",
-            };
-            const numEntries = await countEntriesInFile(file);
-            await db.collection("projects").updateOne({ _id: doc._id }, { $set: { numEntries } });
-          }
+          console.warn("Project %s has no identifiable data source for counting entries", doc.id);
+          await db.collection("projects").updateOne({ _id: doc._id }, { $set: { numEntries: -1 } });
         }
       }
       catch (err) {
         console.error("Error updating project %s: %s", doc.id, err);
         await db.collection("projects").updateOne({ _id: doc._id }, { $set: { numEntries: 0 } });
       }
-
       totalProcessed += 1;
     };
 
