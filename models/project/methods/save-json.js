@@ -2,8 +2,6 @@ const FileStorage = require("../../../services/file-storage");
 
 const { projectSchemaVersion } = require("../schema");
 
-const countEntries = require("./count-entries");
-
 function base64ToBlob(base64) {
   return fetch(base64).then((res) => res.text());
 }
@@ -31,7 +29,7 @@ module.exports = async function saveJson(projectJson) {
 
   this.json = projectJson;
 
-  this.numEntries = await countEntries(projectJson);
+  this.numEntries = projectJson.meta.size || 0;
 
   this.version = projectSchemaVersion;
 
