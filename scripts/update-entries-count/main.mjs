@@ -46,10 +46,16 @@ async function urlToBuffer(source) {
       console.warn(`Fetch timed out for ${source}, aborting...`);
       controller.abort();
     },
-    60_000,
+    5_000,
   );
-  const res = await fetch(source, { signal: controller.signal });
-  clearTimeout(timeoutId);
+  let res;
+  try {
+    // Timeout only until headers are received.
+    res = await fetch(source, { signal: controller.signal });
+  }
+  finally {
+    clearTimeout(timeoutId);
+  }
   if (!res.ok) {
     throw new Error(`Failed to fetch file: ${res.status} ${res.statusText}`);
   }
@@ -120,7 +126,6 @@ async function countExcelRowsFromBuffer(
 }
 
 async function countEntriesInFile(file) {
-  console.debug("Counting entries in file:", file);
   if (file.format === "data") {
     return file.blob.length;
   }
@@ -190,7 +195,7 @@ async function main() {
   const db = client.db();
 
   const BATCH_SIZE = 1000;
-  const CONCURRENCY = 4;
+  const CONCURRENCY = 8;
 
   let totalProcessed = 0;
   const projectsCount = await db.collection("projects").countDocuments({ numEntries: { $exists: false } });
