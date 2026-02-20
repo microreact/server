@@ -268,7 +268,7 @@ export default async function handler(req, res) {
         {
           title: "Views",
           value: totalViews,
-          label: "Total number of projects views",
+          label: "Number of projects views since Feb 18 2026",
           // diff: viewsDiff,
         },
       ],
