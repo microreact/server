@@ -31,6 +31,10 @@
       "clientSecret": ""
     },
 
+    "ldap": {
+      "syncGroups": []
+    },
+
     "secret": "",
 
     "session": {
