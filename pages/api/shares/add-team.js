@@ -21,7 +21,10 @@ async function handler(req, res) {
 
   const teamModel = await db.models.Team.findOne({
     id: team,
-    owner: user.id,
+    $or: [
+      { owner: user.id },
+      { "members.user": user.id },
+    ],
   });
 
   if (!teamModel) {
