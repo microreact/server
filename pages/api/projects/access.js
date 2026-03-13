@@ -20,23 +20,21 @@ export default async function (req, res) {
 
   if (req.method === "GET") {
     const sharedWithUserIds = [];
+    const sharedWithTeamIds = [];
 
     for (const share of projectModel.shares) {
       if (share.user) {
         sharedWithUserIds.push(share.user);
       }
+      if (share.team) {
+        sharedWithTeamIds.push(share.team);
+      }
     }
 
     const userDocs = await db.models.User.find(
-      {
-        _id: { $in: sharedWithUserIds },
-      },
-      {
-        email: 1,
-      },
-      {
-        lean: true,
-      }
+      { _id: { $in: sharedWithUserIds } },
+      { email: 1 },
+      { lean: true },
     );
     const userEmailById = new Map();
     for (const userDoc of userDocs) {
