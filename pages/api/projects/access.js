@@ -41,6 +41,16 @@ export default async function (req, res) {
       userEmailById.set(userDoc._id.toString(), userDoc.email);
     }
 
+    const teamDocs = await db.models.Team.find(
+      { _id: { $in: sharedWithTeamIds } },
+      { name: 1 },
+      { lean: true },
+    );
+    const teamNameById = new Map();
+    for (const teamDoc of teamDocs) {
+      teamNameById.set(teamDoc._id.toString(), teamDoc.name);
+    }
+
     const shares = [];
 
     for (const share of projectModel.shares) {
@@ -57,6 +67,14 @@ export default async function (req, res) {
           kind: "invitation",
           createdAt: share.createdAt,
           email: share.email,
+          role: share.role ?? "viewer",
+        });
+      }
+      else if (share.kind === "team") {
+        shares.push({
+          kind: share.kind,
+          createdAt: share.createdAt,
+          name: teamNameById.get(share.team.toString()),
           role: share.role ?? "viewer",
         });
       }
