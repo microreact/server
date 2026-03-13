@@ -122,8 +122,9 @@ const ProjectAccessSharingSection = ({ projectAccessData }) => {
                   primary={email}
                   secondary={
                     (kind === "user") ? `Added on ${new Date(createdAt).toLocaleDateString()}` :
-                      (kind === "invitation") ? `Invitation sent on ${new Date(createdAt).toLocaleDateString()}` :
-                        null
+                      (kind === "team") ? `Added on ${new Date(createdAt).toLocaleDateString()}` :
+                        (kind === "invitation") ? `Invitation sent on ${new Date(createdAt).toLocaleDateString()}` :
+                          null
                   }
                 />
                 <ListItemSecondaryAction>

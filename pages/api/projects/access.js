@@ -42,13 +42,13 @@ export default async function (req, res) {
     }
 
     const teamDocs = await db.models.Team.find(
-      { _id: { $in: sharedWithTeamIds } },
-      { name: 1 },
+      { id: { $in: sharedWithTeamIds } },
+      { name: 1, id: 1 },
       { lean: true },
     );
     const teamNameById = new Map();
     for (const teamDoc of teamDocs) {
-      teamNameById.set(teamDoc._id.toString(), teamDoc.name);
+      teamNameById.set(teamDoc.id, teamDoc.name);
     }
 
     const shares = [];
@@ -74,6 +74,7 @@ export default async function (req, res) {
         shares.push({
           kind: share.kind,
           createdAt: share.createdAt,
+          email: teamNameById.get(share.team.toString()),
           name: teamNameById.get(share.team.toString()),
           role: share.role ?? "viewer",
         });
