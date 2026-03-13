@@ -21,3 +21,13 @@ body:json {
     "role": "viewer"
   }
 }
+
+tests {
+  test("returns HTTP 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("returns true", function() {
+    expect(res.getBody()).to.equal(true);
+  });
+}
