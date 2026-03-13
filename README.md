@@ -22,9 +22,11 @@ If you fork the project and publish it please use another name.
 `POST /api/cron/sync-ldap-groups`
 
 - Requires header `x-cron-secret` matching `cronSecret` in configuration.
+- Optional `dryRun` query parameter (e.g. `/api/cron/sync-ldap-groups?dryRun=true`) runs the sync without MongoDB writes.
 - Requires `auth.ldap.syncGroups` to be configured with LDAP group DNs.
 - For each configured LDAP group:
 	- Creates/uses a MongoDB team with the same group CN as team name.
 	- Syncs team members from LDAP group members.
 	- Ensures each member exists as a MongoDB user account.
 - User lookups are done by `auth.ldap.emailAttribute`.
+- Group sync errors are isolated and reported per group, so one failing group does not stop others.

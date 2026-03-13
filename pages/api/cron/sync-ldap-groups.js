@@ -5,6 +5,23 @@ import logger from "cgps-application-server/logger";
 import databaseService from "../../../services/database";
 import serverRuntimeConfig from "../../../utils/server-runtime-config";
 
+function isTruthy(value) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (typeof value === "number") {
+    return value === 1;
+  }
+
+  if (typeof value !== "string") {
+    return false;
+  }
+
+  const normalised = value.trim().toLowerCase();
+  return [ "1", "true", "yes", "on" ].includes(normalised);
+}
+
 function firstValue(value) {
   if (Array.isArray(value)) {
     return value[0];
@@ -166,7 +183,7 @@ async function getLdapMemberProfile(client, memberDn, config) {
   return entries[0] || null;
 }
 
-async function getOrCreateUser(db, profile, config) {
+async function getOrCreateUser(db, profile, config, { dryRun }) {
   const emailAttribute = config.emailAttribute || "mail";
   const nameAttribute = config.nameAttribute || "displayName";
 
@@ -178,24 +195,44 @@ async function getOrCreateUser(db, profile, config) {
   const name = getStringAttribute(profile, nameAttribute);
 
   let userModel = await db.models.User.findOne({ email });
+  let created = false;
 
   if (!userModel) {
+    if (dryRun) {
+      return {
+        userModel: {
+          _id: `dry-run:${email}`,
+          email,
+          name: name || email,
+        },
+        created: true,
+      };
+    }
+
     userModel = await db.models.User.create({
       email,
       name: name || email,
     });
+
+    created = true;
   }
   else if (name && !userModel.name) {
-    userModel.name = name;
-    await userModel.save();
+    if (!dryRun) {
+      userModel.name = name;
+      await userModel.save();
+    }
   }
 
-  return userModel;
+  return {
+    userModel,
+    created,
+  };
 }
 
-async function syncGroup(db, client, config, group) {
+async function syncGroup(db, client, config, group, { dryRun }) {
   const memberDns = await getLdapGroupMemberDns(client, group.dn);
   const memberUsers = [];
+  let usersCreated = 0;
 
   for (const memberDn of memberDns) {
     const profile = await getLdapMemberProfile(client, memberDn, config);
@@ -203,9 +240,12 @@ async function syncGroup(db, client, config, group) {
       continue;
     }
 
-    const userModel = await getOrCreateUser(db, profile, config);
-    if (userModel) {
-      memberUsers.push(userModel);
+    const result = await getOrCreateUser(db, profile, config, { dryRun });
+    if (result?.userModel) {
+      memberUsers.push(result.userModel);
+      if (result.created) {
+        usersCreated += 1;
+      }
     }
   }
 
@@ -217,11 +257,24 @@ async function syncGroup(db, client, config, group) {
   const uniqueUsers = Array.from(usersById.values());
 
   let teamModel = await db.models.Team.findOne({ name: group.name });
+  let teamCreated = false;
   if (!teamModel) {
-    teamModel = await db.models.Team.create({
-      name: group.name,
-      members: [],
-    });
+    if (dryRun) {
+      teamModel = {
+        id: null,
+        name: group.name,
+        owner: null,
+        members: [],
+      };
+    }
+    else {
+      teamModel = await db.models.Team.create({
+        name: group.name,
+        members: [],
+      });
+    }
+
+    teamCreated = true;
   }
 
   const existingRolesByUserId = new Map();
@@ -242,13 +295,18 @@ async function syncGroup(db, client, config, group) {
     teamModel.owner = uniqueUsers[0]?._id;
   }
 
-  await teamModel.save();
+  if (!dryRun) {
+    await teamModel.save();
+  }
 
   return {
     ldapGroupDn: group.dn,
-    teamId: teamModel.id,
+    teamId: teamModel.id || null,
     teamName: teamModel.name,
     membersSynced: uniqueUsers.length,
+    usersCreated,
+    teamCreated,
+    dryRun,
   };
 }
 
@@ -268,6 +326,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "No LDAP sync groups configured" });
   }
 
+  const dryRun = isTruthy(req.query.dryRun);
+
   const db = await databaseService();
 
   const ldapClient = ldap.createClient({
@@ -282,16 +342,40 @@ export default async function handler(req, res) {
     await bindClient(ldapClient, config.bindDn, config.bindCredentials);
 
     const groups = [];
+    const errors = [];
     for (const group of syncGroups) {
-      groups.push(
-        await syncGroup(db, ldapClient, config, group),
-      );
+      try {
+        groups.push(
+          await syncGroup(db, ldapClient, config, group, { dryRun }),
+        );
+      }
+      catch (groupError) {
+        logger.error(
+          {
+            error: groupError,
+            ldapGroupDn: group.dn,
+            teamName: group.name,
+          },
+          "failed to sync LDAP group",
+        );
+
+        errors.push({
+          ldapGroupDn: group.dn,
+          teamName: group.name,
+          error: groupError?.message || "Unknown error",
+        });
+      }
     }
 
-    return res.status(200).json({
+    const responseBody = {
       groups,
       totalGroups: groups.length,
-    });
+      failedGroups: errors.length,
+      errors,
+      dryRun,
+    };
+
+    return res.status(200).json(responseBody);
   }
   catch (error) {
     logger.error(error, "failed to sync LDAP groups");
