@@ -16,6 +16,7 @@ import "@fontsource-variable/space-grotesk";
 import "@fontsource-variable/geist";
 import "@sweetalert2/theme-material-ui/material-ui.css";
 import "microreact-viewer/styles/index.css";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 import { muiTheme } from "../utils/theme.js";
 import createEmotionCache from "../utils/create-emotion-cache.js";

@@ -20,11 +20,6 @@ export default class MyDocument extends Document {
 
           <link
             rel="stylesheet"
-            href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css"
-          />
-
-          <link
-            rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/flexlayout-react@0.6.10/style/light.css"
           />
 
