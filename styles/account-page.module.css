@@ -11,7 +11,7 @@
 
 .page :global .MuiContainer-root {
   padding-top: 0;
-  padding-bottom: 32px;
+  padding-bottom: 0;
   position: relative;
   /* min-height: calc(100vh - 96px); */
 }

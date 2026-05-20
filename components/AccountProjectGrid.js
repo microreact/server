@@ -6,12 +6,50 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { FixedSizeGrid } from "react-window";
 
 import UiLoadingBar from "./UiLoadingBar";
 import UiEmptyState from "./UiEmptyState";
 import AccountProjectCard from "./AccountProjectCard";
 import * as DataHooks from "../utils/data-hooks";
 import * as ApiClient from "../utils/api-client";
+
+const CARD_GAP = 24;
+const CARD_MIN_WIDTH = 280;
+const CARD_HEIGHT = 132;
+
+function VirtualGridCell({ columnIndex, rowIndex, style, data }) {
+  const { items, columnCount, renderCard } = data;
+  const index = rowIndex * columnCount + columnIndex;
+
+  if (index >= items.length) {
+    return null;
+  }
+
+  return (
+    <div
+      style={{
+        ...style,
+        paddingRight: CARD_GAP,
+        paddingBottom: CARD_GAP,
+      }}
+    >
+      { renderCard(items[index]) }
+    </div>
+  );
+}
+
+VirtualGridCell.propTypes = {
+  columnIndex: PropTypes.number.isRequired,
+  data: PropTypes.shape({
+    columnCount: PropTypes.number.isRequired,
+    items: PropTypes.arrayOf(PropTypes.object).isRequired,
+    renderCard: PropTypes.func.isRequired,
+  }).isRequired,
+  rowIndex: PropTypes.number.isRequired,
+  style: PropTypes.object.isRequired,
+};
 
 const EMPTY_ARRAY = [];
 
@@ -102,12 +140,36 @@ function AccountProjectGrid(props) {
 
       if (searchFilter) {
         const filter = searchFilter.toLowerCase();
-        result = projectsData.filter((x) => x.name?.toLowerCase().includes(filter));
+        result = result.filter((x) => x.name?.toLowerCase().includes(filter));
       }
 
-      return result.sort((a, b) => b.updatedAt - a.updatedAt);
+      return [ ...result ].sort((a, b) => b.updatedAt - a.updatedAt);
     },
     [ projectsData, props.filter, searchFilter ],
+  );
+
+  const renderCard = React.useCallback(
+    (item) => (
+      <AccountProjectCard
+        access={item.access}
+        binned={item.binned}
+        createdAt={item.createdAt}
+        destination={item.destination}
+        folder={item.folder}
+        shared={item.shared}
+        role={item.role}
+        id={item.id}
+        name={item.name}
+        onDelete={() => handleDeleteProject(data, item.id, !item.binned)}
+        onLoading={setLoading}
+        onMove={(folderId, allFolders) => handleMoveProject(data, item.id, folderId, allFolders)}
+        onStar={() => handleStarProject(data, item.id, !item.starred)}
+        starred={item.starred}
+        updatedAt={item.updatedAt}
+        url={item.url}
+      />
+    ),
+    [ data ],
   );
 
   if (error) {
@@ -135,7 +197,7 @@ function AccountProjectGrid(props) {
             size="small"
             autoFocus
             id="serach-projects-input"
-            placeholder="Search"
+            placeholder={`Search ${filteredData.length} project${filteredData.length !== 1 ? "s" : ""}...`}
             value={searchFilter}
             onChange={(event) => setSearchFilter(event.target.value)}
             InputProps={{
@@ -160,42 +222,35 @@ function AccountProjectGrid(props) {
           )
           :
           (
-            <Grid container spacing={3}>
-              {
-                filteredData.map(
-                  (item) => (
-                    <Grid
-                      key={item.id}
-                      item
-                      xs={12}
-                      sm={12}
-                      md={6}
-                      lg={4}
-                      xl={3}
-                    >
-                      <AccountProjectCard
-                        access={item.access}
-                        binned={item.binned}
-                        createdAt={item.createdAt}
-                        destination={item.destination}
-                        folder={item.folder}
-                        shared={item.shared}
-                        role={item.role}
-                        id={item.id}
-                        name={item.name}
-                        onDelete={() => handleDeleteProject(data, item.id, !item.binned)}
-                        onLoading={setLoading}
-                        onMove={(folderId, allFolders) => handleMoveProject(data, item.id, folderId, allFolders)}
-                        onStar={() => handleStarProject(data, item.id, !item.starred)}
-                        starred={item.starred}
-                        updatedAt={item.updatedAt}
-                        url={item.url}
-                      />
-                    </Grid>
-                  )
-                )
-              }
-            </Grid>
+            <div style={{ height: "calc(100vh - 120px)" }}>
+              <AutoSizer>
+                {
+                  ({ width, height }) => {
+                    const columnCount = Math.max(1, Math.floor((width + CARD_GAP) / (CARD_MIN_WIDTH + CARD_GAP)));
+                    const columnWidth = Math.floor((width - ((columnCount - 1) * CARD_GAP)) / columnCount);
+                    const rowCount = Math.ceil(filteredData.length / columnCount);
+
+                    return (
+                      <FixedSizeGrid
+                        columnCount={columnCount}
+                        columnWidth={columnWidth}
+                        height={height}
+                        itemData={{
+                          columnCount,
+                          items: filteredData,
+                          renderCard,
+                        }}
+                        rowCount={rowCount}
+                        rowHeight={CARD_HEIGHT + CARD_GAP}
+                        width={width}
+                      >
+                        {VirtualGridCell}
+                      </FixedSizeGrid>
+                    );
+                  }
+                }
+              </AutoSizer>
+            </div>
           )
       }
     </React.Fragment>
