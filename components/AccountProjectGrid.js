@@ -13,6 +13,8 @@ import AccountProjectCard from "./AccountProjectCard";
 import * as DataHooks from "../utils/data-hooks";
 import * as ApiClient from "../utils/api-client";
 
+const EMPTY_ARRAY = [];
+
 async function handleStarProject(data, projectId, isStarred) {
   const projects = [ ...data ];
   const projectIndex = projects.findIndex((x) => x.id === projectId);
@@ -88,10 +90,25 @@ function SkeletonGrid() {
 
 function AccountProjectGrid(props) {
   const { data, error } = props.apiEndpoint();
+  const projectsData = data || EMPTY_ARRAY;
 
   const [ searchFilter, setSearchFilter ] = React.useState("");
 
   const [ isLoading, setLoading ] = React.useState(false);
+
+  const filteredData = React.useMemo(
+    () => {
+      let result = (props.filter) ? projectsData.filter(props.filter) : projectsData;
+
+      if (searchFilter) {
+        const filter = searchFilter.toLowerCase();
+        result = projectsData.filter((x) => x.name?.toLowerCase().includes(filter));
+      }
+
+      return result;
+    },
+    [ projectsData, props.filter, searchFilter ],
+  );
 
   if (error) {
     return (
@@ -101,13 +118,6 @@ function AccountProjectGrid(props) {
 
   if (!data) {
     return (<SkeletonGrid />);
-  }
-
-  let filteredData = (props.filter) ? data.filter(props.filter) : data;
-
-  if (searchFilter) {
-    const filter = searchFilter.toLowerCase();
-    filteredData = data.filter((x) => x.name?.toLowerCase().includes(filter));
   }
 
   return (
