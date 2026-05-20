@@ -105,7 +105,7 @@ function AccountProjectGrid(props) {
         result = projectsData.filter((x) => x.name?.toLowerCase().includes(filter));
       }
 
-      return result;
+      return result.sort((a, b) => b.updatedAt - a.updatedAt);
     },
     [ projectsData, props.filter, searchFilter ],
   );

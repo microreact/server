@@ -46,7 +46,7 @@ async function findProjectDocuments(query, user) {
       "version": 1,
     },
     {
-      sort: { updatedAt: -1 },
+      // sort: { updatedAt: -1 },
       lean: true,
     },
   );
