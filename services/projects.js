@@ -155,6 +155,7 @@ export async function findUserSharedProjects(user) {
         "shares.team": { $in: userTeamsIds },
       },
     ],
+    binned: { $ne: true },
   };
 
   return findProjectDocuments(query, user);
