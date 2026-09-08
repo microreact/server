@@ -41,6 +41,17 @@
   height: 24px;
 }
 
+.root:global(.list) :global .title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
+  text-overflow: clip;
+  min-height: 24px;
+  max-height: 48px;
+  height: auto;
+}
+
 .root :global .attribute {
   height: 20px;
   line-height: 20px;

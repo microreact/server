@@ -4,10 +4,14 @@ import PropTypes from "prop-types";
 import Skeleton from "@mui/material/Skeleton";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import SearchIcon from "@mui/icons-material/Search";
+import ViewListOutlinedIcon from "@mui/icons-material/ViewListOutlined";
+import ViewModuleOutlinedIcon from "@mui/icons-material/ViewModuleOutlined";
 import InputAdornment from "@mui/material/InputAdornment";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { FixedSizeGrid } from "react-window";
+import { FixedSizeGrid, FixedSizeList } from "react-window";
 
 import UiLoadingBar from "./UiLoadingBar";
 import UiEmptyState from "./UiEmptyState";
@@ -18,6 +22,18 @@ import * as ApiClient from "../utils/api-client";
 const CARD_GAP = 24;
 const CARD_MIN_WIDTH = 280;
 const CARD_HEIGHT = 132;
+const PROJECT_VIEW_STORAGE_KEY = "microreact.account.projects.view";
+const PROJECT_VIEW_GRID = "grid";
+const PROJECT_VIEW_LIST = "list";
+
+function getStoredViewMode() {
+  if (typeof window === "undefined") {
+    return PROJECT_VIEW_LIST;
+  }
+
+  const storedView = window.localStorage.getItem(PROJECT_VIEW_STORAGE_KEY);
+  return storedView === PROJECT_VIEW_GRID ? PROJECT_VIEW_GRID : PROJECT_VIEW_LIST;
+}
 
 function VirtualGridCell({ columnIndex, rowIndex, style, data }) {
   const { items, columnCount, renderCard } = data;
@@ -48,6 +64,28 @@ VirtualGridCell.propTypes = {
     renderCard: PropTypes.func.isRequired,
   }).isRequired,
   rowIndex: PropTypes.number.isRequired,
+  style: PropTypes.object.isRequired,
+};
+
+function VirtualListRow({ index, style, data }) {
+  return (
+    <div
+      style={{
+        ...style,
+        paddingBottom: CARD_GAP,
+      }}
+    >
+      { data.renderCard(data.items[index]) }
+    </div>
+  );
+}
+
+VirtualListRow.propTypes = {
+  data: PropTypes.shape({
+    items: PropTypes.arrayOf(PropTypes.object).isRequired,
+    renderCard: PropTypes.func.isRequired,
+  }).isRequired,
+  index: PropTypes.number.isRequired,
   style: PropTypes.object.isRequired,
 };
 
@@ -134,6 +172,20 @@ function AccountProjectGrid(props) {
 
   const [ isLoading, setLoading ] = React.useState(false);
 
+  const [ viewMode, setViewMode ] = React.useState(getStoredViewMode);
+
+  const handleViewModeChange = React.useCallback(
+    (event, nextViewMode) => {
+      if (!nextViewMode) {
+        return;
+      }
+
+      setViewMode(nextViewMode);
+      window.localStorage.setItem(PROJECT_VIEW_STORAGE_KEY, nextViewMode);
+    },
+    [],
+  );
+
   const filteredData = React.useMemo(
     () => {
       let result = (props.filter) ? projectsData.filter(props.filter) : projectsData;
@@ -167,9 +219,10 @@ function AccountProjectGrid(props) {
         starred={item.starred}
         updatedAt={item.updatedAt}
         url={item.url}
+        viewMode={viewMode}
       />
     ),
-    [ data ],
+    [ data, viewMode ],
   );
 
   if (error) {
@@ -192,6 +245,31 @@ function AccountProjectGrid(props) {
         container
         spacing={1}
       >
+        <Grid item>
+          <ToggleButtonGroup
+            exclusive
+            onChange={handleViewModeChange}
+            size="small"
+            value={viewMode}
+          >
+            <ToggleButton
+              aria-label="Grid view"
+              title="Grid view"
+              value={PROJECT_VIEW_GRID}
+            >
+              <ViewModuleOutlinedIcon fontSize="small" />
+            </ToggleButton>
+
+            <ToggleButton
+              aria-label="List view"
+              title="List view"
+              value={PROJECT_VIEW_LIST}
+            >
+              <ViewListOutlinedIcon fontSize="small" />
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Grid>
+
         <Grid item>
           <TextField
             size="small"
@@ -226,6 +304,23 @@ function AccountProjectGrid(props) {
               <AutoSizer>
                 {
                   ({ width, height }) => {
+                    if (viewMode === PROJECT_VIEW_LIST) {
+                      return (
+                        <FixedSizeList
+                          height={height}
+                          itemData={{
+                            items: filteredData,
+                            renderCard,
+                          }}
+                          itemCount={filteredData.length}
+                          itemSize={CARD_HEIGHT + CARD_GAP}
+                          width={width}
+                        >
+                          {VirtualListRow}
+                        </FixedSizeList>
+                      );
+                    }
+
                     const columnCount = Math.max(1, Math.floor((width + CARD_GAP) / (CARD_MIN_WIDTH + CARD_GAP)));
                     const columnWidth = Math.floor((width - ((columnCount - 1) * CARD_GAP)) / columnCount);
                     const rowCount = Math.ceil(filteredData.length / columnCount);

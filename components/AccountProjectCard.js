@@ -27,7 +27,7 @@ const MoveProjectToFolderMenu = dynamic(
 function AccountProjectCard(props) {
   return (
     <Card
-      className={rootClassName}
+      className={`${rootClassName} ${props.viewMode}`}
       variant="outlined"
     >
       <CardContent
@@ -144,6 +144,11 @@ AccountProjectCard.propTypes = {
   shared: PropTypes.bool,
   starred: PropTypes.bool,
   url: PropTypes.string.isRequired,
+  viewMode: PropTypes.oneOf([ "grid", "list" ]),
+};
+
+AccountProjectCard.defaultProps = {
+  viewMode: "grid",
 };
 
 export default AccountProjectCard;
