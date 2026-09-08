@@ -20,6 +20,7 @@ import * as DataHooks from "../utils/data-hooks";
 import * as ApiClient from "../utils/api-client";
 
 const CARD_GAP = 24;
+const LIST_CARD_GAP = 8;
 const CARD_MIN_WIDTH = 280;
 const CARD_HEIGHT = 132;
 const PROJECT_VIEW_STORAGE_KEY = "microreact.account.projects.view";
@@ -72,7 +73,7 @@ function VirtualListRow({ index, style, data }) {
     <div
       style={{
         ...style,
-        paddingBottom: CARD_GAP,
+        paddingBottom: LIST_CARD_GAP,
       }}
     >
       { data.renderCard(data.items[index]) }
@@ -240,7 +241,7 @@ function AccountProjectGrid(props) {
       { isLoading && <UiLoadingBar /> }
 
       <Grid
-        alignItems="flex-end"
+        alignItems="center"
         className="mr-project-grid-controls"
         container
         spacing={1}
@@ -313,7 +314,7 @@ function AccountProjectGrid(props) {
                             renderCard,
                           }}
                           itemCount={filteredData.length}
-                          itemSize={CARD_HEIGHT + CARD_GAP}
+                          itemSize={CARD_HEIGHT + LIST_CARD_GAP}
                           width={width}
                         >
                           {VirtualListRow}

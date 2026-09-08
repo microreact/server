@@ -34,6 +34,11 @@
   width: auto;
 }
 
+.page :global .mr-project-grid-controls .MuiOutlinedInput-root,
+.page :global .mr-project-grid-controls .MuiToggleButton-root {
+  height: 36px;
+}
+
 .api-section :global .MuiTypography-root + * {
   min-height: 56px;
   height: 56px;
