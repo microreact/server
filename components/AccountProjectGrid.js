@@ -29,11 +29,11 @@ const PROJECT_VIEW_LIST = "list";
 
 function getStoredViewMode() {
   if (typeof window === "undefined") {
-    return PROJECT_VIEW_LIST;
+    return PROJECT_VIEW_GRID;
   }
 
   const storedView = window.localStorage.getItem(PROJECT_VIEW_STORAGE_KEY);
-  return storedView === PROJECT_VIEW_GRID ? PROJECT_VIEW_GRID : PROJECT_VIEW_LIST;
+  return storedView === PROJECT_VIEW_LIST ? PROJECT_VIEW_LIST : PROJECT_VIEW_GRID;
 }
 
 function VirtualGridCell({ columnIndex, rowIndex, style, data }) {
