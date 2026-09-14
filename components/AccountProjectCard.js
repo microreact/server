@@ -65,6 +65,8 @@ function AccountProjectCard(props) {
           className="attribute"
           color="textSecondary"
         >
+          Updated { new Date(props.updatedAt).toLocaleDateString() }
+          &nbsp;
           Created { new Date(props.createdAt).toLocaleDateString() }
         </Typography>
       </CardContent>
@@ -135,14 +137,15 @@ AccountProjectCard.propTypes = {
   createdAt: PropTypes.string,
   folder: PropTypes.string,
   id: PropTypes.string.isRequired,
-  role: PropTypes.s,
   name: PropTypes.string,
   onDelete: PropTypes.func.isRequired,
   onLoading: PropTypes.func.isRequired,
   onMove: PropTypes.func.isRequired,
   onStar: PropTypes.func.isRequired,
+  role: PropTypes.s,
   shared: PropTypes.bool,
   starred: PropTypes.bool,
+  updatedAt: PropTypes.string,
   url: PropTypes.string.isRequired,
   viewMode: PropTypes.oneOf([ "grid", "list" ]),
 };
