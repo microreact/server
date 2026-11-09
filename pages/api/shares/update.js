@@ -4,9 +4,10 @@ import catchApiErrors from "cgps-stdlib/errors/catch-api-errors.js";
 import ApiError from "cgps-stdlib/errors/api-error.js";
 
 import findProjectByIdentifier from "../../../services/project/find-by-identifier.js";
-import database from "../../../services/database";
+import databaseService from "../../../services/database.js";
 
 async function handler(req, res) {
+  const db = await databaseService();
 
   const user = await requireUserMiddleware(req, res);
 
@@ -29,11 +30,11 @@ async function handler(req, res) {
   let share;
 
   share = (
-    model.shares.find((x) => x?.email === email && x.kind === "invitation")
+    model.shares.find((x) => x.kind === "invitation" && x?.email === email)
   );
 
   if (!share) {
-    const invitedUser = await database.models.User.findOne(
+    const invitedUser = await db.models.User.findOne(
       { email },
       { _id: 1 },
       { lean: true },
@@ -41,7 +42,31 @@ async function handler(req, res) {
 
     if (invitedUser?._id) {
       share = (
-        model.shares.find((x) => x?.user.equals(invitedUser._id) && x.kind === "user")
+        model.shares.find((x) => x.kind === "user" && x.user?.equals(invitedUser._id))
+      );
+    }
+  }
+
+  if (!share) {
+    const teamDoc = await db.models.Team.findOne(
+      {
+        $or: [
+          { id: email },
+          { name: email },
+        ],
+      },
+      { id: 1 },
+      { lean: true },
+    );
+
+    if (teamDoc?.id) {
+      share = (
+        model.shares.find((x) => x.kind === "team" && x.team === teamDoc.id)
+      );
+    }
+    else {
+      share = (
+        model.shares.find((x) => x.kind === "team" && x.team === email)
       );
     }
   }

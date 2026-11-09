@@ -22,7 +22,7 @@ async function handler(req, res) {
   let shareIndex;
 
   shareIndex = (
-    model.shares.findIndex((x) => x?.email === email && x.kind === "invitation")
+    model.shares.findIndex((x) => x.kind === "invitation" && x?.email === email)
   );
 
   if (shareIndex === -1) {
@@ -34,7 +34,31 @@ async function handler(req, res) {
 
     if (invitedUser?._id) {
       shareIndex = (
-        model.shares.findIndex((x) => x?.user.equals(invitedUser._id) && x.kind === "user")
+        model.shares.findIndex((x) => x.kind === "user" && x.user?.equals(invitedUser._id))
+      );
+    }
+  }
+
+  if (shareIndex === -1) {
+    const teamDoc = await db.models.Team.findOne(
+      {
+        $or: [
+          { id: email },
+          { name: email },
+        ],
+      },
+      { id: 1 },
+      { lean: true },
+    );
+
+    if (teamDoc?.id) {
+      shareIndex = (
+        model.shares.findIndex((x) => x.kind === "team" && x.team === teamDoc.id)
+      );
+    }
+    else {
+      shareIndex = (
+        model.shares.findIndex((x) => x.kind === "team" && x.team === email)
       );
     }
   }

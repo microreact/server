@@ -136,7 +136,7 @@ const ProjectAccessSharingSection = ({ projectAccessData }) => {
                         onClick={
                           () => {
                             setSendingStatus(true);
-                            ApiClient.sendInvitation(projectAccessData.id, [ email ])
+                            ApiClient.addShareAccess(projectAccessData.id, [ email ], "viewer")
                               .then(() => {
                                 setEmails([]);
                                 DataHooks.projectAccessMutation(projectAccessData.id);
@@ -159,7 +159,7 @@ const ProjectAccessSharingSection = ({ projectAccessData }) => {
                     onClick={
                       () => {
                         setSendingStatus(true);
-                        ApiClient.revokeInvitation(projectAccessData.id, kind, email)
+                        ApiClient.removeShareAccess(projectAccessData.id, email, kind)
                           .then(() => {
                             DataHooks.projectAccessMutation(projectAccessData.id);
                             enqueueSnackbar("Invitation has been revoked", { variant: "success" });
@@ -198,7 +198,7 @@ const ProjectAccessSharingSection = ({ projectAccessData }) => {
                 onClick={
                   () => {
                     setSendingStatus(true);
-                    ApiClient.sendInvitation(projectAccessData.id, emails)
+                    ApiClient.addShareAccess(projectAccessData.id, emails, "viewer")
                       .then(() => {
                         setEmails([]);
                         DataHooks.projectAccessMutation(projectAccessData.id);

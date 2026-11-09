@@ -71,11 +71,13 @@ export default async function (req, res) {
         });
       }
       else if (share.kind === "team") {
+        const teamName = teamNameById.get(share.team.toString()) ?? share.team.toString();
         shares.push({
           kind: share.kind,
           createdAt: share.createdAt,
-          email: teamNameById.get(share.team.toString()),
-          name: teamNameById.get(share.team.toString()),
+          email: teamName,
+          name: teamName,
+          team: share.team,
           role: share.role ?? "viewer",
         });
       }

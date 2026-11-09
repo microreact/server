@@ -45,7 +45,7 @@ export default async function (req, res) {
 
   if (inviteModel.project) {
     const projectModel = await db.models.Project.findOne({ id: inviteModel.project });
-    const index = projectModel.shares.findIndex((x) => x.user.equals(user.id));
+    const index = projectModel.shares.findIndex((x) => x.kind === "user" && x.user?.equals(user.id));
     if (index !== -1) {
       projectModel.shares[index].role = inviteModel.role;
     }
