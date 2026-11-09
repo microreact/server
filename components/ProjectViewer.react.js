@@ -138,15 +138,19 @@ class ProjectViewer extends React.PureComponent {
       })
     );
     return new Promise((resolve) => {
+      const role = savedProjectProps.role ?? this.state.projectProps.role ?? "owner";
+      const isOwner = savedProjectProps.isOwner ?? (role === "owner");
+      const isManager = savedProjectProps.isManager ?? (isOwner || role === "manager");
+      const isEditor = savedProjectProps.isEditor ?? (isManager || role === "editor");
       this.setState(
         {
           projectProps: {
             ...this.state.projectProps,
             ...savedProjectProps,
-            "role": "owner",
-            "isOwner": true,
-            "isManager": true,
-            "isEditor": true,
+            role,
+            isOwner,
+            isManager,
+            isEditor,
           },
         },
         resolve,

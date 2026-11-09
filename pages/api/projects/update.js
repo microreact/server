@@ -2,6 +2,7 @@ import requireUserMiddleware from "cgps-application-server/middleware/require-us
 import logger from "cgps-application-server/logger";
 
 import findProjectByIdentifier from "../../../services/project/find-by-identifier";
+import findUserTeamIds from "../../../services/users/find-user-team-ids";
 
 export const config = {
   api: {
@@ -24,9 +25,9 @@ export default async function (req, res) {
 
   logger.info("project updated", { project: projectModel.id }, { user, req, res });
 
-  return res.json({
-    role: projectModel.getUserRole(user.id),
-    id: projectModel.id,
-    url: projectModel.url(),
-  });
+  const userTeamsIds = await findUserTeamIds(user?.id);
+
+  return res.json(
+    projectModel.getProjectProps(user, userTeamsIds)
+  );
 }
