@@ -1,8 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -25,6 +31,8 @@ const MoveProjectToFolderMenu = dynamic(
 );
 
 function AccountProjectCard(props) {
+  const [ isConfirmDeleteOpen, setConfirmDeleteOpen ] = React.useState(false);
+
   return (
     <Card
       className={rootClassName}
@@ -111,7 +119,14 @@ function AccountProjectCard(props) {
           (props.role === "owner") && (
             <IconButton
               title={props.binned ? "Restore Project" : "Delete Project"}
-              onClick={props.onDelete}
+              onClick={() => {
+                if (props.binned) {
+                  props.onDelete();
+                }
+                else {
+                  setConfirmDeleteOpen(true);
+                }
+              }}
             >
               {
                 props.binned
@@ -125,6 +140,38 @@ function AccountProjectCard(props) {
         }
       </CardActions>
 
+      <Dialog
+        open={isConfirmDeleteOpen}
+        onClose={() => setConfirmDeleteOpen(false)}
+      >
+        <DialogTitle>
+          Delete Project?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to move &ldquo;{ props.name }&rdquo; to the bin?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setConfirmDeleteOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="primary"
+            variant="contained"
+            disableElevation
+            onClick={() => {
+              setConfirmDeleteOpen(false);
+              props.onDelete();
+            }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </Card>
   );
 }
@@ -135,7 +182,7 @@ AccountProjectCard.propTypes = {
   createdAt: PropTypes.string,
   folder: PropTypes.string,
   id: PropTypes.string.isRequired,
-  role: PropTypes.s,
+  role: PropTypes.string,
   name: PropTypes.string,
   onDelete: PropTypes.func.isRequired,
   onLoading: PropTypes.func.isRequired,
