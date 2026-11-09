@@ -19,17 +19,19 @@ async function handler(req, res) {
   }
 
   const teamModel = await db.models.Team.findOne({
-    id: team,
-    owner: user.id,
+    $or: [
+      { id: team },
+      { name: team },
+    ],
   });
 
   if (!teamModel) {
-    throw new ApiError(403);
+    throw new ApiError(404, "Team not found");
   }
 
   const projectModel = await findProjectByIdentifier(
     project,
-    "owner",
+    "manager",
     user.id,
   );
 
