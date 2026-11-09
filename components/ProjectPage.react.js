@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 
 import UiLoadingSpinner from "./UiLoadingSpinner";
 import ProjectViewer from "./ProjectViewer.react";
-import OldProjectNotification from "./OldProjectNotification";
 import ApiError from "./ApiError.react";
 
 import * as ApiClient from "../utils/api-client";
@@ -73,7 +72,7 @@ class ProjectPage extends React.Component {
   }
 
   render() {
-    const { props, state } = this;
+    const { state } = this;
 
     if (state.errorResponse) {
       return (
@@ -83,19 +82,10 @@ class ProjectPage extends React.Component {
 
     if (state.projectProps) {
       return (
-        <React.Fragment>
-          {
-            (state.projectProps?.version === 1) && (
-              <OldProjectNotification
-                projectSlug={props.projectSlug}
-              />
-            )
-          }
-          <ProjectViewer
-            key={state.projectProps.id}
-            projectProps={state.projectProps}
-          />
-        </React.Fragment>
+        <ProjectViewer
+          key={state.projectProps.id}
+          projectProps={state.projectProps}
+        />
       );
     }
 

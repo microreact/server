@@ -35,7 +35,7 @@ function AccountProjectCard(props) {
 
   return (
     <Card
-      className={rootClassName}
+      className={`${rootClassName} ${props.viewMode}`}
       variant="outlined"
     >
       <CardContent
@@ -73,6 +73,8 @@ function AccountProjectCard(props) {
           className="attribute"
           color="textSecondary"
         >
+          Updated { new Date(props.updatedAt).toLocaleDateString() }
+          &nbsp;
           Created { new Date(props.createdAt).toLocaleDateString() }
         </Typography>
       </CardContent>
@@ -190,7 +192,13 @@ AccountProjectCard.propTypes = {
   onStar: PropTypes.func.isRequired,
   shared: PropTypes.bool,
   starred: PropTypes.bool,
+  updatedAt: PropTypes.string,
   url: PropTypes.string.isRequired,
+  viewMode: PropTypes.oneOf([ "grid", "list" ]),
+};
+
+AccountProjectCard.defaultProps = {
+  viewMode: "grid",
 };
 
 export default AccountProjectCard;

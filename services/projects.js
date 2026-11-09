@@ -46,7 +46,7 @@ async function findProjectDocuments(query, user) {
       "version": 1,
     },
     {
-      sort: { updatedAt: -1 },
+      // sort: { updatedAt: -1 },
       lean: true,
     },
   );
@@ -157,6 +157,7 @@ export async function findUserSharedProjects(user) {
         "shares.team": { $in: userTeamsIds },
       },
     ],
+    binned: { $ne: true },
   };
 
   return findProjectDocuments(query, user);
