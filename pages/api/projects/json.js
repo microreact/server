@@ -8,6 +8,7 @@ import getUserMiddleware from "cgps-application-server/middleware/get-user";
 import databaseService from "../../../services/database";
 import * as ProjectsService from "../../../services/projects";
 import findProjectByIdentifier from "../../../services/project/find-by-identifier";
+import findUserTeamIds from "../../../services/users/find-user-team-ids";
 
 async function findProjectState(stateId, projectModel) {
   const db = await databaseService();
@@ -64,7 +65,8 @@ async function handler(req, res) {
   jsonDocument.meta.createdAt = projectModel.createdAt.toISOString();
   jsonDocument.meta.updatedAt = projectModel.updatedAt.toISOString();
 
-  jsonDocument._ = projectModel.getProjectProps(user);
+  const userTeamsIds = await findUserTeamIds(user?.id);
+  jsonDocument._ = projectModel.getProjectProps(user, userTeamsIds);
 
   projectModel.updateStats();
   await projectModel.save();

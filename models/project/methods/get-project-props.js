@@ -1,9 +1,9 @@
-function getProjectProps(user) {
+function getProjectProps(user, userTeamsIds) {
   const props = {};
   props.id = this.id;
   props.version = this.version;
   props.url = this.url();
-  props.role = this.getUserRole(user?.id);
+  props.role = this.getUserRole(user?.id, userTeamsIds);
   props.isOwner = props.role === "owner";
   props.isManager = props.isOwner || props.role === "manager";
   props.isEditor = props.isManager || props.role === "editor";

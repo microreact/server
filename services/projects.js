@@ -51,8 +51,10 @@ async function findProjectDocuments(query, user) {
     },
   );
 
+  const userTeamsIds = await findUserTeamIds(user?.id);
+
   for (const projectDoc of projectDocs) {
-    const role = db.models.Project.prototype.getUserRole.call(projectDoc, user?.id);
+    const role = db.models.Project.prototype.getUserRole.call(projectDoc, user?.id, userTeamsIds);
     const hasOnwerAccess = (role === "owner");
     if (projectDoc?.json?.meta) {
       docs.push({
