@@ -63,6 +63,8 @@
 
   "showcaseFolders": [],
 
+  "showLocalMicroreactBanner": false,
+
   "smtp": {   
     "host": "smtp.microreact.org",
     "port": "25",

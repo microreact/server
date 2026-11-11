@@ -32,6 +32,7 @@ function getPublicRuntimeConfig(serverRuntimeConfig) {
     downloadActions: serverRuntimeConfig.downloadActions,
     baseUrl: serverRuntimeConfig.baseUrl,
     customShowcase: serverRuntimeConfig.showcaseFolders?.length > 0,
+    showLocalMicroreactBanner: Boolean(serverRuntimeConfig.showLocalMicroreactBanner),
   };
 }
 

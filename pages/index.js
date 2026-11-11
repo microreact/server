@@ -4,6 +4,7 @@ import Head from "next/head";
 
 import Showcase from "../components/Showcase";
 import UiVimeoPlayer from "../components/UiVimeoPlayer";
+import publicRuntimeConfig from "../utils/public-runtime-config";
 
 import defaultStyles from "../components/default-layout/index.module.css";
 
@@ -33,6 +34,31 @@ export default function Home() {
       </section>
 
       </div>
+
+      {
+        publicRuntimeConfig.showLocalMicroreactBanner && (
+          <section className="mr-local-banner">
+            <div className="mr-local-banner__content">
+              <div className="mr-local-banner__text">
+                <h2 className="mr-local-banner__title">
+                  Working with sensitive data?
+                </h2>
+                <p className="mr-local-banner__description">
+                  Visualise and explore your projects locally with Microreact Local desktop app
+                </p>
+              </div>
+              <a
+                className="mr-local-banner__cta"
+                href="https://local.microreact.org"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Try Microreact Local &rarr;
+              </a>
+            </div>
+          </section>
+        )
+      }
 
       <section className="mr-used-by">
         <div className="mr-used-by-content">
