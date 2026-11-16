@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-no-target-blank */
 import React from "react";
 import Head from "next/head";
+import CGPSFooter from "cgps-stdlib/ui/cgps-footer/index.js";
 
 import Showcase from "../components/Showcase";
 import UiVimeoPlayer from "../components/UiVimeoPlayer";
@@ -10,6 +11,28 @@ import defaultStyles from "../components/default-layout/index.module.css";
 
 export async function getServerSideProps(context) {
   return { props: {} };
+}
+
+function Footer() {
+  return (
+    <CGPSFooter
+      brand="Microreact"
+      links={[
+        {
+          text: "Privacy Policy",
+          href: "https://docs.microreact.org/about-microreact/privacy-and-terms#personal-data-and-your-responsibilities",
+        },
+        {
+          text: "Documentation",
+          href: "https://docs.microreact.org/",
+        },
+        {
+          text: "Contact Us",
+          href: "https://docs.microreact.org/feedback/contact",
+        },
+      ]}
+    />
+  );
 }
 
 export default function Home() {
@@ -95,53 +118,7 @@ export default function Home() {
 
       <Showcase />
 
-      <footer className={defaultStyles["mr-footer"]}>
-        <p className={defaultStyles["mr-footer-credits"]}>
-          Microreact is developed and maintained by the&nbsp;
-          <a href="https://www.pathogensurveillance.net/">
-            Centre for Genomic Pathogen Surveillance
-          </a>
-          < hr />
-          <a href="https://docs.microreact.org/about-microreact/privacy-and-terms#personal-data-and-your-responsibilities">
-            Privacy Policy
-          </a>
-          <a href="https://docs.microreact.org/">
-            Documentation
-          </a>
-          <a href="https://docs.microreact.org/feedback/contact">
-            Contact Us
-          </a>
-        </p>
-        <br />
-        <p>
-          <span>Funded by </span>
-          <img
-            src="/images/logos/wellcome-white.png"
-            className={defaultStyles["mr-footer-logo-square"]}
-          />
-        </p>
-        <p>
-          <span>Developed at </span>
-          <img src="/images/logos/bdi-white.png" className={defaultStyles["mr-footer-logo-square"]} />
-          <img src="/images/logos/sanger.svg" className={defaultStyles["mr-footer-logo"]} />
-        </p>
-        <p>
-          <a
-            href="https://www.pathogensurveillance.net"
-            target="_blank"
-          >
-            <img
-              src="/images/logos/cgps-long-white.svg"
-              className={defaultStyles["mr-footer-logo-cgps"]}
-            />
-          </a>
-        </p>
-        {/*
-        <p className={defaultStyles["cgps-copyright"]}>
-          © 2018 Centre for Genomic Pathogen Surveillance
-        </p>
-        */}
-      </footer>
+      <Footer />
 
     </div>
   );
