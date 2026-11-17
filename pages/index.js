@@ -7,32 +7,8 @@ import Showcase from "../components/Showcase";
 import UiVimeoPlayer from "../components/UiVimeoPlayer";
 import publicRuntimeConfig from "../utils/public-runtime-config";
 
-import defaultStyles from "../components/default-layout/index.module.css";
-
 export async function getServerSideProps(context) {
   return { props: {} };
-}
-
-function Footer() {
-  return (
-    <CGPSFooter
-      brand="Microreact"
-      links={[
-        {
-          text: "Privacy Policy",
-          href: "https://docs.microreact.org/about-microreact/privacy-and-terms#personal-data-and-your-responsibilities",
-        },
-        {
-          text: "Documentation",
-          href: "https://docs.microreact.org/",
-        },
-        {
-          text: "Contact Us",
-          href: "https://docs.microreact.org/feedback/contact",
-        },
-      ]}
-    />
-  );
 }
 
 export default function Home() {
@@ -118,7 +94,23 @@ export default function Home() {
 
       <Showcase />
 
-      <Footer />
+      <CGPSFooter
+        brand="Microreact"
+        links={[
+          {
+            text: "Privacy Policy",
+            href: "https://docs.microreact.org/about-microreact/privacy-and-terms#personal-data-and-your-responsibilities",
+          },
+          {
+            text: "Documentation",
+            href: "https://docs.microreact.org/",
+          },
+          {
+            text: "Contact Us",
+            href: "https://docs.microreact.org/feedback/contact",
+          },
+        ]}
+      />
 
     </div>
   );
